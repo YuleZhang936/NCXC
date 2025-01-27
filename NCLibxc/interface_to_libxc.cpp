@@ -1,14 +1,15 @@
 
 // This program is used to interface with libxc which is a library for exchange-correlation functionals in density functional theory.
-
-// How to compile as an independent program:
-//  module load libxc/5.2.3-icc17
-//  g++ -std=c++11 -o my_program interface_to_libxc.cpp -I/public1/soft/libxc/install/include -L/public1/soft/libxc/install/lib -lxc
-//  ./my_program
-
+/*
+How to compile as an independent program:
+source /public1/home/scg0213/software-scg0213/libxc-7.0.0/install/libxc.sh
+g++ -std=c++11 -o my_program interface_to_libxc.cpp -I/public1/home/scg0213/software-scg0213/libxc-7.0.0/install/include -L/public1/home/scg0213/software-scg0213/libxc-7.0.0/install/lib -lxc
+./my_program
+*/
 // func_id can be found in the libxc website https://libxc.gitlab.io/functionals/
 #include "interface_to_libxc.h"
 #include <iostream>
+#include <cstdio>
 
 LibxcInterface::LibxcInterface(int xc_id, bool spin_polarized)
 {
@@ -131,7 +132,7 @@ LibxcInterface::~LibxcInterface()
 
 
     /////////////////////////////////////////////////////////////
-    //GGA START, up to the second derivative
+    //GGA START, up to the fourth derivative
     // GGA Energy Density for spin-polarized systems
     std::vector<double> LibxcInterface::gga_exc(const std::vector<double> &rho_up, const std::vector<double> &rho_down, const std::vector<double> &sigma_1, const std::vector<double> &sigma_2, const std::vector<double> &sigma_3)
     {
@@ -220,6 +221,198 @@ LibxcInterface::~LibxcInterface()
             v2sigma2_6[i] = v2sigma2[6 * i + 5];
         }
     }
+
+    // GGA the third derivative for spin-polarized systems
+    void LibxcInterface::gga_kxc(
+        const std::vector<double> &rho_up, const std::vector<double> &rho_down,
+        const std::vector<double> &sigma_1, const std::vector<double> &sigma_2, const std::vector<double> &sigma_3,
+        std::vector<double> &v3rho3_1, std::vector<double> &v3rho3_2, std::vector<double> &v3rho3_3,std::vector<double> &v3rho3_4,
+        std::vector<double> &v3rho2sigma_1, std::vector<double> &v3rho2sigma_2, std::vector<double> &v3rho2sigma_3,std::vector<double> &v3rho2sigma_4, std::vector<double> &v3rho2sigma_5, std::vector<double> &v3rho2sigma_6, std::vector<double> &v3rho2sigma_7, std::vector<double> &v3rho2sigma_8, std::vector<double> &v3rho2sigma_9,
+        std::vector<double> &v3rhosigma2_1, std::vector<double> &v3rhosigma2_2, std::vector<double> &v3rhosigma2_3,
+        std::vector<double> &v3rhosigma2_4, std::vector<double> &v3rhosigma2_5, std::vector<double> &v3rhosigma2_6,
+        std::vector<double> &v3rhosigma2_7, std::vector<double> &v3rhosigma2_8, std::vector<double> &v3rhosigma2_9, std::vector<double> &v3rhosigma2_10, std::vector<double> &v3rhosigma2_11, std::vector<double> &v3rhosigma2_12,
+        std::vector<double> &v3sigma3_1, std::vector<double> &v3sigma3_2, std::vector<double> &v3sigma3_3,
+        std::vector<double> &v3sigma3_4, std::vector<double> &v3sigma3_5, std::vector<double> &v3sigma3_6,
+        std::vector<double> &v3sigma3_7, std::vector<double> &v3sigma3_8, std::vector<double> &v3sigma3_9, std::vector<double> &v3sigma3_10
+    )
+    {
+        int np = rho_up.size();
+        std::vector<double> rho(2 * np);
+        std::vector<double> sigma(3 * np), v3rho3(4 * np), v3rho2sigma(9 * np), v3rhosigma2(12 * np), v3sigma3(10 * np);
+    
+        for(int i = 0; i < np; ++i) {
+            rho[2*i]     = rho_up[i];
+            rho[2*i + 1] = rho_down[i];
+            sigma[3*i]   = sigma_1[i];
+            sigma[3*i+1] = sigma_2[i];
+            sigma[3*i+2] = sigma_3[i];
+        }
+    
+        xc_gga_kxc(&func, np, rho.data(), sigma.data(),
+                   v3rho3.data(), v3rho2sigma.data(), v3rhosigma2.data(), v3sigma3.data());
+
+    
+        // Assign results back
+        for(int i = 0; i < np; ++i) {
+            v3rho3_1[i]         = v3rho3[4 * i + 0];
+            v3rho3_2[i]         = v3rho3[4 * i + 1];
+            v3rho3_3[i]         = v3rho3[4 * i + 2];
+            v3rho3_4[i]         = v3rho3[4 * i + 3];
+            v3rho2sigma_1[i]    = v3rho2sigma[9 * i + 0];
+            v3rho2sigma_2[i]    = v3rho2sigma[9 * i + 1];
+            v3rho2sigma_3[i]    = v3rho2sigma[9 * i + 2];
+            v3rho2sigma_4[i]    = v3rho2sigma[9 * i + 3];
+            v3rho2sigma_5[i]    = v3rho2sigma[9 * i + 4];
+            v3rho2sigma_6[i]    = v3rho2sigma[9 * i + 5];
+            v3rho2sigma_7[i]    = v3rho2sigma[9 * i + 6];
+            v3rho2sigma_8[i]    = v3rho2sigma[9 * i + 7];
+            v3rho2sigma_9[i]    = v3rho2sigma[9 * i + 8];
+            v3rhosigma2_1[i]    = v3rhosigma2[12 * i + 0];
+            v3rhosigma2_2[i]    = v3rhosigma2[12 * i + 1];
+            v3rhosigma2_3[i]    = v3rhosigma2[12 * i + 2];
+            v3rhosigma2_4[i]    = v3rhosigma2[12 * i + 3];
+            v3rhosigma2_5[i]    = v3rhosigma2[12 * i + 4];
+            v3rhosigma2_6[i]    = v3rhosigma2[12 * i + 5];
+            v3rhosigma2_7[i]    = v3rhosigma2[12 * i + 6];
+            v3rhosigma2_8[i]    = v3rhosigma2[12 * i + 7];
+            v3rhosigma2_9[i]    = v3rhosigma2[12 * i + 8];
+            v3rhosigma2_10[i]   = v3rhosigma2[12 * i + 9];
+            v3rhosigma2_11[i]   = v3rhosigma2[12 * i + 10];
+            v3rhosigma2_12[i]   = v3rhosigma2[12 * i + 11];
+            v3sigma3_1[i]       = v3sigma3[10 * i + 0];
+            v3sigma3_2[i]       = v3sigma3[10 * i + 1];
+            v3sigma3_3[i]       = v3sigma3[10 * i + 2];
+            v3sigma3_4[i]       = v3sigma3[10 * i + 3];
+            v3sigma3_5[i]       = v3sigma3[10 * i + 4];
+            v3sigma3_6[i]       = v3sigma3[10 * i + 5];
+            v3sigma3_7[i]       = v3sigma3[10 * i + 6];
+            v3sigma3_8[i]       = v3sigma3[10 * i + 7];
+            v3sigma3_9[i]       = v3sigma3[10 * i + 8];
+            v3sigma3_10[i]      = v3sigma3[10 * i + 9];
+        }
+    }
+    
+    // GGA the fourth derivative for spin-polarized systems
+    void LibxcInterface::gga_lxc(
+        const std::vector<double> &rho_up, const std::vector<double> &rho_down,
+        const std::vector<double> &sigma_1, const std::vector<double> &sigma_2, const std::vector<double> &sigma_3,
+        std::vector<double> &v4rho4_1, std::vector<double> &v4rho4_2, std::vector<double> &v4rho4_3,
+        std::vector<double> &v4rho4_4, std::vector<double> &v4rho4_5, std::vector<double> &v4rho3sigma_1,
+        std::vector<double> &v4rho3sigma_2, std::vector<double> &v4rho3sigma_3, std::vector<double> &v4rho3sigma_4, std::vector<double> &v4rho3sigma_5,std::vector<double> &v4rho3sigma_6,
+        std::vector<double> &v4rho3sigma_7, std::vector<double> &v4rho3sigma_8, std::vector<double> &v4rho3sigma_9, std::vector<double> &v4rho3sigma_10, std::vector<double> &v4rho3sigma_11,
+        std::vector<double> &v4rho3sigma_12,
+        std::vector<double> &v4rho2sigma2_1, std::vector<double> &v4rho2sigma2_2,
+        std::vector<double> &v4rho2sigma2_3, std::vector<double> &v4rho2sigma2_4, std::vector<double> &v4rho2sigma2_5,std::vector<double> &v4rho2sigma2_6,
+        std::vector<double> &v4rho2sigma2_7, std::vector<double> &v4rho2sigma2_8, std::vector<double> &v4rho2sigma2_9, std::vector<double> &v4rho2sigma2_10,
+        std::vector<double> &v4rho2sigma2_11, std::vector<double> &v4rho2sigma2_12,
+        std::vector<double> &v4rho2sigma2_13, std::vector<double> &v4rho2sigma2_14, std::vector<double> &v4rho2sigma2_15,
+        std::vector<double> &v4rho2sigma2_16, std::vector<double> &v4rho2sigma2_17, std::vector<double> &v4rho2sigma2_18,  
+        std::vector<double> &v4rhosigma3_1, std::vector<double> &v4rhosigma3_2, std::vector<double> &v4rhosigma3_3,
+        std::vector<double> &v4rhosigma3_4, std::vector<double> &v4rhosigma3_5, std::vector<double> &v4rhosigma3_6,
+        std::vector<double> &v4rhosigma3_7, std::vector<double> &v4rhosigma3_8, std::vector<double> &v4rhosigma3_9,
+        std::vector<double> &v4rhosigma3_10, std::vector<double> &v4rhosigma3_11, std::vector<double> &v4rhosigma3_12,
+        std::vector<double> &v4rhosigma3_13, std::vector<double> &v4rhosigma3_14, std::vector<double> &v4rhosigma3_15,
+        std::vector<double> &v4rhosigma3_16, std::vector<double> &v4rhosigma3_17, std::vector<double> &v4rhosigma3_18,
+        std::vector<double> &v4rhosigma3_19, std::vector<double> &v4rhosigma3_20,
+        std::vector<double> &v4sigma4_1, std::vector<double> &v4sigma4_2, std::vector<double> &v4sigma4_3,
+        std::vector<double> &v4sigma4_4, std::vector<double> &v4sigma4_5, std::vector<double> &v4sigma4_6,
+        std::vector<double> &v4sigma4_7, std::vector<double> &v4sigma4_8, std::vector<double> &v4sigma4_9,
+        std::vector<double> &v4sigma4_10, std::vector<double> &v4sigma4_11, std::vector<double> &v4sigma4_12,
+        std::vector<double> &v4sigma4_13, std::vector<double> &v4sigma4_14, std::vector<double> &v4sigma4_15
+    )
+    {
+        int np = rho_up.size();
+        std::vector<double> rho(2 * np);
+        std::vector<double> sigma(3 * np), v4rho4(5 * np), v4rho3sigma(12 * np), v4rho2sigma2(18 * np),v4rhosigma3(20 * np), v4sigma4(15 * np);
+    
+        for(int i = 0; i < np; ++i) {
+            rho[2*i]     = rho_up[i];
+            rho[2*i + 1] = rho_down[i];
+            sigma[3*i]   = sigma_1[i];
+            sigma[3*i+1] = sigma_2[i];
+            sigma[3*i+2] = sigma_3[i];
+        }
+    
+        xc_gga_lxc(&func, np, rho.data(), sigma.data(),
+                   v4rho4.data(), v4rho3sigma.data(), v4rho2sigma2.data(), v4rhosigma3.data(), v4sigma4.data());
+
+    
+        // Assign results back
+        for(int i = 0; i < np; ++i) {
+            v4rho4_1[i]         = v4rho4[5*i + 0];
+            v4rho4_2[i]         = v4rho4[5*i + 1];
+            v4rho4_3[i]         = v4rho4[5*i + 2];
+            v4rho4_4[i]         = v4rho4[5*i + 3];
+            v4rho4_5[i]         = v4rho4[5*i + 4];
+            v4rho3sigma_1[i]    = v4rho3sigma[12*i + 0];
+            v4rho3sigma_2[i]    = v4rho3sigma[12*i + 1];
+            v4rho3sigma_3[i]    = v4rho3sigma[12*i + 2];
+            v4rho3sigma_4[i]    = v4rho3sigma[12*i + 3];
+            v4rho3sigma_5[i]    = v4rho3sigma[12*i + 4];
+            v4rho3sigma_6[i]    = v4rho3sigma[12*i + 5];
+            v4rho3sigma_7[i]    = v4rho3sigma[12*i + 6];
+            v4rho3sigma_8[i]    = v4rho3sigma[12*i + 7];
+            v4rho3sigma_9[i]    = v4rho3sigma[12*i + 8];
+            v4rho3sigma_10[i]   = v4rho3sigma[12*i + 9];
+            v4rho3sigma_11[i]   = v4rho3sigma[12*i + 10];
+            v4rho3sigma_12[i]   = v4rho3sigma[12*i + 11];
+            v4rho2sigma2_1[i]   = v4rho2sigma2[18*i + 0];
+            v4rho2sigma2_2[i]   = v4rho2sigma2[18*i + 1];
+            v4rho2sigma2_3[i]   = v4rho2sigma2[18*i + 2];
+            v4rho2sigma2_4[i]   = v4rho2sigma2[18*i + 3];
+            v4rho2sigma2_5[i]   = v4rho2sigma2[18*i + 4];
+            v4rho2sigma2_6[i]   = v4rho2sigma2[18*i + 5];
+            v4rho2sigma2_7[i]   = v4rho2sigma2[18*i + 6];
+            v4rho2sigma2_8[i]   = v4rho2sigma2[18*i + 7];
+            v4rho2sigma2_9[i]   = v4rho2sigma2[18*i + 8];
+            v4rho2sigma2_10[i]  = v4rho2sigma2[18*i + 9];
+            v4rho2sigma2_11[i]  = v4rho2sigma2[18*i + 10];
+            v4rho2sigma2_12[i]  = v4rho2sigma2[18*i + 11];
+            v4rho2sigma2_13[i]  = v4rho2sigma2[18*i + 12];
+            v4rho2sigma2_14[i]  = v4rho2sigma2[18*i + 13];
+            v4rho2sigma2_15[i]  = v4rho2sigma2[18*i + 14];
+            v4rho2sigma2_16[i]  = v4rho2sigma2[18*i + 15];
+            v4rho2sigma2_17[i]  = v4rho2sigma2[18*i + 16];
+            v4rho2sigma2_18[i]  = v4rho2sigma2[18*i + 17];
+            v4rhosigma3_1[i]    = v4rhosigma3[20*i + 0];
+            v4rhosigma3_2[i]    = v4rhosigma3[20*i + 1];
+            v4rhosigma3_3[i]    = v4rhosigma3[20*i + 2];
+            v4rhosigma3_4[i]    = v4rhosigma3[20*i + 3];
+            v4rhosigma3_5[i]    = v4rhosigma3[20*i + 4];
+            v4rhosigma3_6[i]    = v4rhosigma3[20*i + 5];
+            v4rhosigma3_7[i]    = v4rhosigma3[20*i + 6];
+            v4rhosigma3_8[i]    = v4rhosigma3[20*i + 7];
+            v4rhosigma3_9[i]    = v4rhosigma3[20*i + 8];
+            v4rhosigma3_10[i]   = v4rhosigma3[20*i + 9];
+            v4rhosigma3_11[i]   = v4rhosigma3[20*i + 10];
+            v4rhosigma3_12[i]   = v4rhosigma3[20*i + 11];
+            v4rhosigma3_13[i]   = v4rhosigma3[20*i + 12];
+            v4rhosigma3_14[i]   = v4rhosigma3[20*i + 13];
+            v4rhosigma3_15[i]   = v4rhosigma3[20*i + 14];
+            v4rhosigma3_16[i]   = v4rhosigma3[20*i + 15];
+            v4rhosigma3_17[i]   = v4rhosigma3[20*i + 16];
+            v4rhosigma3_18[i]   = v4rhosigma3[20*i + 17];
+            v4rhosigma3_19[i]   = v4rhosigma3[20*i + 18];
+            v4rhosigma3_20[i]   = v4rhosigma3[20*i + 19];      
+            v4sigma4_1[i]       = v4sigma4[15*i + 0];
+            v4sigma4_2[i]       = v4sigma4[15*i + 1];
+            v4sigma4_3[i]       = v4sigma4[15*i + 2];
+            v4sigma4_4[i]       = v4sigma4[15*i + 3];
+            v4sigma4_5[i]       = v4sigma4[15*i + 4];
+            v4sigma4_6[i]       = v4sigma4[15*i + 5];
+            v4sigma4_7[i]       = v4sigma4[15*i + 6];
+            v4sigma4_8[i]       = v4sigma4[15*i + 7];
+            v4sigma4_9[i]       = v4sigma4[15*i + 8];
+            v4sigma4_10[i]      = v4sigma4[15*i + 9];
+            v4sigma4_11[i]      = v4sigma4[15*i + 10];
+            v4sigma4_12[i]      = v4sigma4[15*i + 11];
+            v4sigma4_13[i]      = v4sigma4[15*i + 12];
+            v4sigma4_14[i]      = v4sigma4[15*i + 13];
+            v4sigma4_15[i]      = v4sigma4[15*i + 14];
+        }
+    }
+    
+
     // GGA END
     /////////////////////////////////////////////////////////////
     
@@ -435,8 +628,8 @@ LibxcInterface::~LibxcInterface()
         std::vector<double> v2rho2_1(rho_up.size()), v2rho2_2(rho_down.size()), v2rho2_3(rho_up.size());
         lda_fxc(rho_up, rho_down, v2rho2_1, v2rho2_2, v2rho2_3);
 
-        //        std::vector<double> v3rho3_1(rho_up.size()), v3rho3_2(rho_down.size()), v3rho3_3(rho_up.size()), v3rho3_4(rho_down.size());
-        //        lda_kxc(rho_up, rho_down, v3rho3_1, v3rho3_2, v3rho3_3, v3rho3_4);
+        std::vector<double> v3rho3_1(rho_up.size()), v3rho3_2(rho_down.size()), v3rho3_3(rho_up.size()), v3rho3_4(rho_down.size());
+        lda_kxc(rho_up, rho_down, v3rho3_1, v3rho3_2, v3rho3_3, v3rho3_4);
 
         //        std::vector<double> v4rho4_1(rho_up.size()), v4rho4_2(rho_down.size()), v4rho4_3(rho_up.size()), v4rho4_4(rho_down.size()), v4rho4_5(rho_up.size());
         //        lda_lxc(rho_up, rho_down, v4rho4_1, v4rho4_2, v4rho4_3, v4rho4_4, v4rho4_5);
@@ -471,9 +664,9 @@ LibxcInterface::~LibxcInterface()
             std::cout << f << " ";
         std::cout << std::endl;
 
-        //        std::cout << "V3Rho3_1: ";
-        //        for (auto k : v3rho3_1) std::cout << k << " ";
-        //        std::cout << std::endl;
+        std::cout << "V3Rho3_1: ";
+        for (auto k : v3rho3_1) std::cout << k << " ";
+        std::cout << std::endl;
 
         //        std::cout << "V3Rho3_2: ";
         //        for (auto k : v3rho3_2) std::cout << k << " ";
@@ -525,7 +718,7 @@ LibxcInterface::~LibxcInterface()
     void LibxcInterface::example_gga_spin()
     {
         // 定义自旋极化系统的示例密度和梯度数据
-        std::vector<double> rho_up = {0.1, 0.2, 0.3};
+        std::vector<double> rho_up = {0.1, 0.1, 0.3};
         std::vector<double> rho_down = {0.1, 0.2, 0.3};
         std::vector<double> sigma_1 = {0.01, 0.02, 0.03};
         std::vector<double> sigma_2 = {0.02, 0.01, 0.03};
@@ -534,22 +727,15 @@ LibxcInterface::~LibxcInterface()
         // 计算交换-相关能量密度
         auto exc = gga_exc(rho_up, rho_down, sigma_1, sigma_2, sigma_3);
 
-        // 计算交换-相关势
-        std::vector<double> vrho_1(rho_up.size()), vrho_2(rho_down.size());
-        std::vector<double> vsigma_1(sigma_1.size()), vsigma_2(sigma_2.size()), vsigma_3(sigma_3.size());
-        gga_vxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3, vrho_1, vrho_2, vsigma_1, vsigma_2, vsigma_3);
-
-        // 计算交换-相关势的二阶导数
-        std::vector<double> v2rho2_1(rho_up.size()), v2rho2_2(rho_down.size()), v2rho2_3(rho_up.size());
-        std::vector<double> v2rhosigma_1(rho_up.size()), v2rhosigma_2(rho_up.size()), v2rhosigma_3(rho_up.size()), v2rhosigma_4(rho_up.size()), v2rhosigma_5(rho_up.size()), v2rhosigma_6(rho_up.size());
-        std::vector<double> v2sigma2_1(sigma_1.size()), v2sigma2_2(sigma_1.size()), v2sigma2_3(sigma_1.size()), v2sigma2_4(sigma_1.size()), v2sigma2_5(sigma_1.size()), v2sigma2_6(sigma_1.size());
-        gga_fxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3, v2rho2_1, v2rho2_2, v2rho2_3, v2rhosigma_1, v2rhosigma_2, v2rhosigma_3, v2rhosigma_4, v2rhosigma_5, v2rhosigma_6, v2sigma2_1, v2sigma2_2, v2sigma2_3, v2sigma2_4, v2sigma2_5, v2sigma2_6);
-
-        // 输出结果
         std::cout << "GGA Exc: ";
         for (auto e : exc)
             std::cout << e << " ";
         std::cout << std::endl;
+
+        // 计算交换-相关势
+        std::vector<double> vrho_1(rho_up.size()), vrho_2(rho_down.size());
+        std::vector<double> vsigma_1(sigma_1.size()), vsigma_2(sigma_2.size()), vsigma_3(sigma_3.size());
+        gga_vxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3, vrho_1, vrho_2, vsigma_1, vsigma_2, vsigma_3);
 
         std::cout << "GGA VRho_1: ";
         for (auto v : vrho_1)
@@ -575,6 +761,12 @@ LibxcInterface::~LibxcInterface()
         for (auto v : vsigma_3)
             std::cout << v << " ";
         std::cout << std::endl;
+
+        // 计算交换-相关势的二阶导数
+        std::vector<double> v2rho2_1(rho_up.size()), v2rho2_2(rho_down.size()), v2rho2_3(rho_up.size());
+        std::vector<double> v2rhosigma_1(rho_up.size()), v2rhosigma_2(rho_up.size()), v2rhosigma_3(rho_up.size()), v2rhosigma_4(rho_up.size()), v2rhosigma_5(rho_up.size()), v2rhosigma_6(rho_up.size());
+        std::vector<double> v2sigma2_1(sigma_1.size()), v2sigma2_2(sigma_1.size()), v2sigma2_3(sigma_1.size()), v2sigma2_4(sigma_1.size()), v2sigma2_5(sigma_1.size()), v2sigma2_6(sigma_1.size());
+        gga_fxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3, v2rho2_1, v2rho2_2, v2rho2_3, v2rhosigma_1, v2rhosigma_2, v2rhosigma_3, v2rhosigma_4, v2rhosigma_5, v2rhosigma_6, v2sigma2_1, v2sigma2_2, v2sigma2_3, v2sigma2_4, v2sigma2_5, v2sigma2_6);
 
         std::cout << "GGA V2Rho2_1: ";
         for (auto f : v2rho2_1)
@@ -649,6 +841,53 @@ LibxcInterface::~LibxcInterface()
         std::cout << "GGA V2Sigma2_6: ";
         for (auto f : v2sigma2_6)
             std::cout << f << " ";
+        std::cout << std::endl;
+
+        // calculate the third derivative 
+        std::vector<double> v3rho3_1(rho_up.size()), v3rho3_2(rho_up.size()), v3rho3_3(rho_up.size()), v3rho3_4(rho_up.size());
+        std::vector<double> v3rho2sigma_1(rho_up.size()), v3rho2sigma_2(rho_up.size()), v3rho2sigma_3(rho_up.size()), v3rho2sigma_4(rho_up.size());
+        std::vector<double> v3rho2sigma_5(rho_up.size()), v3rho2sigma_6(rho_up.size()), v3rho2sigma_7(rho_up.size()), v3rho2sigma_8(rho_up.size()), v3rho2sigma_9(rho_up.size());
+        std::vector<double> v3rhosigma2_1(rho_up.size()), v3rhosigma2_2(rho_up.size()), v3rhosigma2_3(rho_up.size()), v3rhosigma2_4(rho_up.size()), v3rhosigma2_5(rho_up.size()), v3rhosigma2_6(rho_up.size()), v3rhosigma2_7(rho_up.size()), v3rhosigma2_8(rho_up.size()), v3rhosigma2_9(rho_up.size()), v3rhosigma2_10(rho_up.size()), v3rhosigma2_11(rho_up.size()), v3rhosigma2_12(rho_up.size());
+        std::vector<double> v3sigma3_1(rho_up.size()), v3sigma3_2(rho_up.size()), v3sigma3_3(rho_up.size()), v3sigma3_4(rho_up.size()), v3sigma3_5(rho_up.size()), v3sigma3_6(rho_up.size()), v3sigma3_7(rho_up.size()), v3sigma3_8(rho_up.size()), v3sigma3_9(rho_up.size()), v3sigma3_10(rho_up.size());
+
+        gga_kxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3,
+            v3rho3_1, v3rho3_2, v3rho3_3, v3rho3_4,
+            v3rho2sigma_1, v3rho2sigma_2, v3rho2sigma_3, v3rho2sigma_4, v3rho2sigma_5, v3rho2sigma_6, v3rho2sigma_7, v3rho2sigma_8, v3rho2sigma_9,
+            v3rhosigma2_1, v3rhosigma2_2, v3rhosigma2_3, v3rhosigma2_4, v3rhosigma2_5, v3rhosigma2_6, v3rhosigma2_7, v3rhosigma2_8, v3rhosigma2_9, v3rhosigma2_10, v3rhosigma2_11, v3rhosigma2_12,
+            v3sigma3_1, v3sigma3_2, v3sigma3_3, v3sigma3_4, v3sigma3_5, v3sigma3_6, v3sigma3_7, v3sigma3_8, v3sigma3_9, v3sigma3_10);
+
+        std::cout << "GGA 3rd derivative (sample) v3rho3_1: ";
+        for (auto k : v3rho3_1) std::cout << k << " ";
+        std::cout << std::endl;
+
+        std::cout << "GGA 3rd derivative (sample) v3rho3_4: ";
+        for (auto k : v3rho3_4) std::cout << k << " ";
+        std::cout << std::endl;
+
+
+        // calculate the fourth derivative
+        std::vector<double> v4rho4_1(rho_up.size()), v4rho4_2(rho_up.size()), v4rho4_3(rho_up.size()), v4rho4_4(rho_up.size()), v4rho4_5(rho_up.size());
+        std::vector<double> v4rho3sigma_1(rho_up.size()), v4rho3sigma_2(rho_up.size()), v4rho3sigma_3(rho_up.size()), v4rho3sigma_4(rho_up.size()), v4rho3sigma_5(rho_up.size()), v4rho3sigma_6(rho_up.size()), v4rho3sigma_7(rho_up.size()), v4rho3sigma_8(rho_up.size()), v4rho3sigma_9(rho_up.size()), v4rho3sigma_10(rho_up.size()), v4rho3sigma_11(rho_up.size()), v4rho3sigma_12(rho_up.size());
+
+        std::vector<double> v4rho2sigma2_1(rho_up.size()), v4rho2sigma2_2(rho_up.size()), v4rho2sigma2_3(rho_up.size()), v4rho2sigma2_4(rho_up.size()), v4rho2sigma2_5(rho_up.size()), v4rho2sigma2_6(rho_up.size()), v4rho2sigma2_7(rho_up.size()), v4rho2sigma2_8(rho_up.size()), v4rho2sigma2_9(rho_up.size()), v4rho2sigma2_10(rho_up.size()), v4rho2sigma2_11(rho_up.size()), v4rho2sigma2_12(rho_up.size()), v4rho2sigma2_13(rho_up.size()), v4rho2sigma2_14(rho_up.size()), v4rho2sigma2_15(rho_up.size()),v4rho2sigma2_16(rho_up.size()), v4rho2sigma2_17(rho_up.size()), v4rho2sigma2_18(rho_up.size());
+
+        std::vector<double> v4rhosigma3_1(rho_up.size()), v4rhosigma3_2(rho_up.size()), v4rhosigma3_3(rho_up.size()), v4rhosigma3_4(rho_up.size()), v4rhosigma3_5(rho_up.size()), v4rhosigma3_6(rho_up.size()), v4rhosigma3_7(rho_up.size()), v4rhosigma3_8(rho_up.size()), v4rhosigma3_9(rho_up.size()), v4rhosigma3_10(rho_up.size()), v4rhosigma3_11(rho_up.size()), v4rhosigma3_12(rho_up.size()), v4rhosigma3_13(rho_up.size()), v4rhosigma3_14(rho_up.size()), v4rhosigma3_15(rho_up.size()), v4rhosigma3_16(rho_up.size()), v4rhosigma3_17(rho_up.size()), v4rhosigma3_18(rho_up.size()), v4rhosigma3_19(rho_up.size()), v4rhosigma3_20(rho_up.size());
+
+        std::vector<double> v4sigma4_1(rho_up.size()), v4sigma4_2(rho_up.size()), v4sigma4_3(rho_up.size()), v4sigma4_4(rho_up.size()), v4sigma4_5(rho_up.size()), v4sigma4_6(rho_up.size()), v4sigma4_7(rho_up.size()), v4sigma4_8(rho_up.size()), v4sigma4_9(rho_up.size()), v4sigma4_10(rho_up.size()), v4sigma4_11(rho_up.size()), v4sigma4_12(rho_up.size()), v4sigma4_13(rho_up.size()), v4sigma4_14(rho_up.size()), v4sigma4_15(rho_up.size());
+
+        gga_lxc(rho_up, rho_down, sigma_1, sigma_2, sigma_3,
+            v4rho4_1, v4rho4_2, v4rho4_3, v4rho4_4, v4rho4_5,
+            v4rho3sigma_1, v4rho3sigma_2, v4rho3sigma_3, v4rho3sigma_4, v4rho3sigma_5, v4rho3sigma_6, v4rho3sigma_7, v4rho3sigma_8, v4rho3sigma_9, v4rho3sigma_10, v4rho3sigma_11, v4rho3sigma_12,
+            v4rho2sigma2_1, v4rho2sigma2_2, v4rho2sigma2_3, v4rho2sigma2_4, v4rho2sigma2_5, v4rho2sigma2_6, v4rho2sigma2_7, v4rho2sigma2_8, v4rho2sigma2_9, v4rho2sigma2_10, v4rho2sigma2_11, v4rho2sigma2_12, v4rho2sigma2_13, v4rho2sigma2_14, v4rho2sigma2_15,v4rho2sigma2_16, v4rho2sigma2_17, v4rho2sigma2_18,
+            v4rhosigma3_1, v4rhosigma3_2, v4rhosigma3_3, v4rhosigma3_4, v4rhosigma3_5, v4rhosigma3_6, v4rhosigma3_7, v4rhosigma3_8, v4rhosigma3_9, v4rhosigma3_10, v4rhosigma3_11, v4rhosigma3_12, v4rhosigma3_13, v4rhosigma3_14, v4rhosigma3_15, v4rhosigma3_16, v4rhosigma3_17, v4rhosigma3_18, v4rhosigma3_19, v4rhosigma3_20,
+            v4sigma4_1, v4sigma4_2, v4sigma4_3, v4sigma4_4, v4sigma4_5, v4sigma4_6, v4sigma4_7, v4sigma4_8, v4sigma4_9, v4sigma4_10, v4sigma4_11, v4sigma4_12, v4sigma4_13, v4sigma4_14, v4sigma4_15);
+
+        std::cout << "GGA 4th derivative (sample) v4rhosigma3_1: ";
+        for (auto l : v4rhosigma3_1) std::cout << l << " ";
+        std::cout << std::endl;
+
+        std::cout << "GGA 4th derivative (sample) v4rhosigma3_20: ";
+        for (auto l : v4rhosigma3_20) std::cout << l << " ";
         std::cout << std::endl;
     }
 
@@ -964,7 +1203,7 @@ LibxcInterface::~LibxcInterface()
         std::cout << v << " ";
 }
 
-
+  
 
 
     /////////////////////////////////////////////////////////////
@@ -989,11 +1228,54 @@ LibxcInterface::~LibxcInterface()
         return exc;
     }
 */
+/*
 
+void LibxcInterface::test_ggas_with_lxc()
+{
+    std::cout << "Testing GGA functionals that support up to 4th derivatives (lxc)...\n";
 
+    // 遍历所有可能的 xc_id
+    for(int id = 1; id < 800; ++id)
+    {
+        xc_func_type localFunc;
+        if(xc_func_init(&localFunc, id, XC_POLARIZED) == 0)
+        {
+            const xc_func_info_type* info = xc_func_get_info(&localFunc);
+            if(info && info->family == XC_FAMILY_GGA)
+            {
+                // 检查是否支持 lxc，假设 n_deriv >= 4 表示支持
+                if(info->n_deriv >= 4)
+                {
+                    // 进一步验证具体的高阶导数函数是否存在
+                    bool has_kxc = (localFunc.kxc != NULL);
+                    bool has_lxc = (localFunc.lxc != NULL);
 
+                    if(has_kxc && has_lxc)
+                    {
+                        std::cout << "Functional ID: " << id
+                                  << " (" << info->name << ")"
+                                  << " supports up to " << info->n_deriv
+                                  << " derivatives (has kxc and lxc)." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Functional ID: " << id
+                                  << " (" << info->name << ")"
+                                  << " claims n_deriv >=4 but lacks ";
+                        if(!has_kxc) std::cout << "kxc ";
+                        if(!has_lxc) std::cout << "lxc ";
+                        std::cout << std::endl;
+                    }
+                }
+            }
+            xc_func_end(&localFunc);
+        }
+    }
 
+    std::cout << "Finished testing GGA functionals.\n";
+}
 
+*/
 
 
 
@@ -1002,10 +1284,17 @@ LibxcInterface::~LibxcInterface()
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // MAIN FOR INDENPENDENT TEST
+
 /*
+
 int main() 
 {
-    // //LDA  test
+    int vmajor, vminor, vmicro;
+    //Get the libxc version 
+    xc_version(&vmajor, &vminor, &vmicro);
+    printf("Libxc version: %d.%d.%d\n", vmajor, vminor, vmicro);
+
+    // //LDA  test 
    try 
    {
        LibxcInterface libxc(1, true); // Example with spin-polarized LDA (xc_id = 1)
@@ -1015,19 +1304,22 @@ int main()
    {
        std::cerr << "Error: " << ex.what() << std::endl;
    }
-    std::cout << "####################################################\n" << std::endl;
+    std::cout << "####################################################\n" << std::endl; 
 
     // //GGA  test
     try
     {
         LibxcInterface libxc(101, true); // Example with spin-polarized GGA (xc_id = 101)
         libxc.example_gga_spin();
+        //libxc.test_ggas_with_lxc();
     }
     catch (const std::exception &ex)
     {
         std::cerr << "Error: " << ex.what() << std::endl;
     }
     std::cout << "####################################################\n" << std::endl;
+
+ 
 
     // //meta-GGA test
     try 
@@ -1042,8 +1334,8 @@ int main()
 
     return 0;
 }
-*/
 
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
