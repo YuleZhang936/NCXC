@@ -9,6 +9,8 @@ NCXC 1.1 is launched and programmed by Xiaoyu Zhang. Peking University, China. 2
 
 NCXC 1.2 is launched and programmed by Xiaoyu Zhang. Peking University, China. 2024/10/05
 
-NCXC 1.3 is launched and programmed by Xiaoyu Zhang, Peking University, China 2021/11/13
+NCXC 1.3 is launched and programmed by Xiaoyu Zhang, Peking University, China 2024/11/13
+
+NCXC 2.1 is launched and programmed by Xiaoyu Zhang, Peking University, China 2025/01/27
 
 Ref:PHYSICAL REVIEW RESEARCH 5, 013036 (2023);  J Kubler et al 1988 J. Phys. F: Met. Phys. 18 469
