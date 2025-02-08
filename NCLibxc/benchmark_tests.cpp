@@ -535,3 +535,109 @@ try {
         std::cerr << "Error: " << ex.what() << std::endl;
     }
 }
+
+// xc local torque from gga, prove non-vanishing torque
+void NCLibxc::gga_local_torque_test()
+{
+    
+    std::vector<double> n  = {1.0, 1.0, 1.0};
+    std::vector<double> mx = {0.1, 0.2, 0.3};
+    std::vector<double> my = {0.2, 0.3, 0.4};
+    std::vector<double> mz = {0.3, 0.4, 0.5};
+
+    // 各阶梯度均采用3个元素的零初始数组（实际计算中请设置合适值）
+    std::vector<double> gradx_n(3, 0.1), grady_n(3, 0.0), gradz_n(3, 0.0);
+    std::vector<double> gradx_mx(3, 0.0), grady_mx(3, 0.3), gradz_mx(3, 0.0);
+    std::vector<double> gradx_my(3, 0.1), grady_my(3, 0.0), gradz_my(3, 0.0);
+    std::vector<double> gradx_mz(3, 0.0), grady_mz(3, 0.0), gradz_mz(3, 0.1);
+
+    std::vector<double> grad2xx_n(3, 0.0), grad2yy_n(3, 0.0), grad2zz_n(3, 0.0);
+    std::vector<double> grad2xy_n(3, 0.0), grad2yz_n(3, 0.0), grad2xz_n(3, 0.0);
+    std::vector<double> grad2xx_mx(3, 0.0), grad2yy_mx(3, 0.0), grad2zz_mx(3, 0.0);
+    std::vector<double> grad2xy_mx(3, 0.0), grad2yz_mx(3, 0.0), grad2xz_mx(3, 0.0);
+    std::vector<double> grad2xx_my(3, 0.0), grad2yy_my(3, 0.0), grad2zz_my(3, 0.0);
+    std::vector<double> grad2xy_my(3, 0.0), grad2yz_my(3, 0.0), grad2xz_my(3, 0.0);
+    std::vector<double> grad2xx_mz(3, 0.0), grad2yy_mz(3, 0.0), grad2zz_mz(3, 0.0);
+    std::vector<double> grad2xy_mz(3, 0.0), grad2yz_mz(3, 0.0), grad2xz_mz(3, 0.0);
+
+    std::vector<double> grad3xxx_n(3, 0.0), grad3xxy_n(3, 0.0), grad3xxz_n(3, 0.0), 
+                        grad3xyy_n(3, 0.0), grad3xyz_n(3, 0.0), grad3xzz_n(3, 0.0);
+    std::vector<double> grad3yyy_n(3, 0.0), grad3yyz_n(3, 0.0), grad3yzz_n(3, 0.0), 
+                        grad3zzz_n(3, 0.0);
+    std::vector<double> grad3xxx_mx(3, 0.0), grad3xxy_mx(3, 0.0), grad3xxz_mx(3, 0.0),
+                        grad3xyy_mx(3, 0.0), grad3xyz_mx(3, 0.0), grad3xzz_mx(3, 0.0);
+    std::vector<double> grad3yyy_mx(3, 0.0), grad3yyz_mx(3, 0.0), grad3yzz_mx(3, 0.0),
+                        grad3zzz_mx(3, 0.0);
+    std::vector<double> grad3xxx_my(3, 0.0), grad3xxy_my(3, 0.0), grad3xxz_my(3, 0.0),
+                        grad3xyy_my(3, 0.0), grad3xyz_my(3, 0.0), grad3xzz_my(3, 0.0);
+    std::vector<double> grad3yyy_my(3, 0.0), grad3yyz_my(3, 0.0), grad3yzz_my(3, 0.0),
+                        grad3zzz_my(3, 0.0);
+    std::vector<double> grad3xxx_mz(3, 0.0), grad3xxy_mz(3, 0.0), grad3xxz_mz(3, 0.0),
+                        grad3xyy_mz(3, 0.0), grad3xyz_mz(3, 0.0), grad3xzz_mz(3, 0.0);
+    std::vector<double> grad3yyy_mz(3, 0.0), grad3yyz_mz(3, 0.0), grad3yzz_mz(3, 0.0),
+                        grad3zzz_mz(3, 0.0);
+
+    std::vector<double> grad4xxxx_n(3, 0.0), grad4xxxy_n(3, 0.0), grad4xxxz_n(3, 0.0),
+                        grad4xxyy_n(3, 0.0), grad4xxyz_n(3, 0.0), grad4xxzz_n(3, 0.0);
+    std::vector<double> grad4xyyy_n(3, 0.0), grad4xyyz_n(3, 0.0), grad4xyzz_n(3, 0.0),
+                        grad4xzzz_n(3, 0.0), grad4yyyy_n(3, 0.0), grad4yyyz_n(3, 0.0);
+    std::vector<double> grad4yyzz_n(3, 0.0), grad4yzzz_n(3, 0.0), grad4zzzz_n(3, 0.0);
+    std::vector<double> grad4xxxx_mx(3, 0.0), grad4xxxy_mx(3, 0.0), grad4xxxz_mx(3, 0.0),
+                        grad4xxyy_mx(3, 0.0), grad4xxyz_mx(3, 0.0), grad4xxzz_mx(3, 0.0);
+    std::vector<double> grad4xyyy_mx(3, 0.0), grad4xyyz_mx(3, 0.0), grad4xyzz_mx(3, 0.0),
+                        grad4xzzz_mx(3, 0.0), grad4yyyy_mx(3, 0.0), grad4yyyz_mx(3, 0.0);
+    std::vector<double> grad4yyzz_mx(3, 0.0), grad4yzzz_mx(3, 0.0), grad4zzzz_mx(3, 0.0);
+    std::vector<double> grad4xxxx_my(3, 0.0), grad4xxxy_my(3, 0.0), grad4xxxz_my(3, 0.0),
+                        grad4xxyy_my(3, 0.0), grad4xxyz_my(3, 0.0), grad4xxzz_my(3, 0.0);
+    std::vector<double> grad4xyyy_my(3, 0.0), grad4xyyz_my(3, 0.0), grad4xyzz_my(3, 0.0),
+                        grad4xzzz_my(3, 0.0), grad4yyyy_my(3, 0.0), grad4yyyz_my(3, 0.0);
+    std::vector<double> grad4yyzz_my(3, 0.0), grad4yzzz_my(3, 0.0), grad4zzzz_my(3, 0.0);
+    std::vector<double> grad4xxxx_mz(3, 0.0), grad4xxxy_mz(3, 0.0), grad4xxxz_mz(3, 0.0),
+                        grad4xxyy_mz(3, 0.0), grad4xxyz_mz(3, 0.0), grad4xxzz_mz(3, 0.0);
+    std::vector<double> grad4xyyy_mz(3, 0.0), grad4xyyz_mz(3, 0.0), grad4xyzz_mz(3, 0.0),
+                        grad4xzzz_mz(3, 0.0), grad4yyyy_mz(3, 0.0), grad4yyyz_mz(3, 0.0);
+    std::vector<double> grad4yyzz_mz(3, 0.0), grad4yzzz_mz(3, 0.0), grad4zzzz_mz(3, 0.0);
+
+    int xc_id = 106;  
+
+    auto torque = gga_torque(xc_id, n, mx, my, mz,
+        gradx_n, grady_n, gradz_n,
+        gradx_mx, grady_mx, gradz_mx,
+        gradx_my, grady_my, gradz_my,
+        gradx_mz, grady_mz, gradz_mz,
+        grad2xx_n, grad2yy_n, grad2zz_n, grad2xy_n, grad2yz_n, grad2xz_n,
+        grad2xx_mx, grad2yy_mx, grad2zz_mx, grad2xy_mx, grad2yz_mx, grad2xz_mx,
+        grad2xx_my, grad2yy_my, grad2zz_my, grad2xy_my, grad2yz_my, grad2xz_my,
+        grad2xx_mz, grad2yy_mz, grad2zz_mz, grad2xy_mz, grad2yz_mz, grad2xz_mz,
+        grad3xxx_n, grad3xxy_n, grad3xxz_n, grad3xyy_n, grad3xyz_n, grad3xzz_n,
+        grad3yyy_n, grad3yyz_n, grad3yzz_n, grad3zzz_n,
+        grad3xxx_mx, grad3xxy_mx, grad3xxz_mx, grad3xyy_mx, grad3xyz_mx, grad3xzz_mx,
+        grad3yyy_mx, grad3yyz_mx, grad3yzz_mx, grad3zzz_mx,
+        grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
+        grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
+        grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
+        grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz,
+        grad4xxxx_n, grad4xxxy_n, grad4xxxz_n, grad4xxyy_n, grad4xxyz_n, grad4xxzz_n,
+        grad4xyyy_n, grad4xyyz_n, grad4xyzz_n, grad4xzzz_n, grad4yyyy_n, grad4yyyz_n,
+        grad4yyzz_n, grad4yzzz_n, grad4zzzz_n,
+        grad4xxxx_mx, grad4xxxy_mx, grad4xxxz_mx, grad4xxyy_mx, grad4xxyz_mx, grad4xxzz_mx,
+        grad4xyyy_mx, grad4xyyz_mx, grad4xyzz_mx, grad4xzzz_mx, grad4yyyy_mx, grad4yyyz_mx,
+        grad4yyzz_mx, grad4yzzz_mx, grad4zzzz_mx,
+        grad4xxxx_my, grad4xxxy_my, grad4xxxz_my, grad4xxyy_my, grad4xxyz_my, grad4xxzz_my,
+        grad4xyyy_my, grad4xyyz_my, grad4xyzz_my, grad4xzzz_my, grad4yyyy_my, grad4yyyz_my,
+        grad4yyzz_my, grad4yzzz_my, grad4zzzz_my,
+        grad4xxxx_mz, grad4xxxy_mz, grad4xxxz_mz, grad4xxyy_mz, grad4xxyz_mz, grad4xxzz_mz,
+        grad4xyyy_mz, grad4xyyz_mz, grad4xyzz_mz, grad4xzzz_mz, grad4yyyy_mz, grad4yyyz_mz,
+        grad4yyzz_mz, grad4yzzz_mz, grad4zzzz_mz);
+
+    // print
+    std::cout << std::fixed << std::setprecision(8);
+    std::cout << "GGA local torque:" << std::endl;
+    for (size_t i = 0; i < torque.size()/3; ++i)
+    {
+        std::cout << "Grid point " << i << ": ("
+                  << torque[3*i] << ", " 
+                  << torque[3*i+1] << ", " 
+                  << torque[3*i+2] << ")" << std::endl;
+    }
+}
