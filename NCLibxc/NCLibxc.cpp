@@ -60,6 +60,10 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::lda_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
+            if (n[i] == 0.0){
+                continue;
+            }
+                
             Eeff[i] = e[i] + 0.5 * (m_omega[i] / n[i]) * (v1[i] - v2[i]);
 
             Matrix2x2 pauli_matrix = construct_pauli_matrix(x, y, z);
@@ -352,6 +356,10 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
+            if (n[i] == 0.0){
+                continue;
+            }
+
             Eeff[i] = e[i] + 0.5 * (m_omega[i] / n[i]) * (v1[i] - v2[i]);
 
             Matrix2x2 pauli_matrix = construct_pauli_matrix(x, y, z);
@@ -726,6 +734,10 @@ std::tuple<std::vector<double>, std::vector<Matrix2x2>, std::vector<Matrix2x2>> 
     
             for (size_t i = 0; i < num_points; ++i)
             {
+                if (n[i] == 0.0){
+                    continue;
+                }
+                
                 Eeff[i] = e[i];
     
                 Matrix2x2 pauli_matrix = construct_pauli_matrix(x, y, z);
