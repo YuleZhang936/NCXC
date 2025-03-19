@@ -26,5 +26,7 @@ NCXC 3.2.1 is launched and programmed by Xiaoyu Zhang, Peking University, China 
 
 NCXC 3.2.2 is launched and programmed by Xiaoyu Zhang, Peking University, China 2025/03/17
 
+NCXC 3.3 is launched and programmed by Xiaoyu Zhang, Peking University, China 2025/03/19
+
 
 Ref:PHYSICAL REVIEW RESEARCH 5, 013036 (2023);  J Kubler et al 1988 J. Phys. F: Met. Phys. 18 469
