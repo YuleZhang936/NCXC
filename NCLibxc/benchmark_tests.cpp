@@ -106,75 +106,6 @@ void NCLibxc::gga_collinear_test()
         std::vector<double> grad3yzz_mz = {0.05, -0.05, 0.05};
         std::vector<double> grad3zzz_mz = {0.05, -0.05, 0.05};
 
-        // Fourth-order derivatives for n
-        std::vector<double> grad4xxxx_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xxxy_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xxxz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xxyy_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xxyz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xxzz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xyyy_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xyyz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xyzz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4xzzz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4yyyy_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4yyyz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4yyzz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4yzzz_n = {0.05, 0.05, 0.10};
-        std::vector<double> grad4zzzz_n = {0.05, 0.05, 0.10};
-
-        // Fourth-order derivatives for mx (all zeros)
-        std::vector<double> grad4xxxx_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxxy_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxxz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxyy_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxyz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxzz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyyy_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyyz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyzz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xzzz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyyy_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyyz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyzz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yzzz_mx = {0.0, 0.0, 0.0};
-        std::vector<double> grad4zzzz_mx = {0.0, 0.0, 0.0};
-
-        // Fourth-order derivatives for my (all zeros)
-        std::vector<double> grad4xxxx_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxxy_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxxz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxyy_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxyz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xxzz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyyy_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyyz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xyzz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4xzzz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyyy_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyyz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yyzz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4yzzz_my = {0.0, 0.0, 0.0};
-        std::vector<double> grad4zzzz_my = {0.0, 0.0, 0.0};
-
-        // Fourth-order derivatives for mz
-        std::vector<double> grad4xxxx_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xxxy_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xxxz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xxyy_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xxyz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xxzz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xyyy_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xyyz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xyzz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4xzzz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4yyyy_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4yyyz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4yyzz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4yzzz_mz = {0.02, -0.02, 0.02};
-        std::vector<double> grad4zzzz_mz = {0.02, -0.02, 0.02};
-
-
         int xc_id = 106; // Example XC functional ID
 
         // Call gga_mc
@@ -195,19 +126,7 @@ void NCLibxc::gga_collinear_test()
     grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
     grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
     grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
-    grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz,
-    grad4xxxx_n, grad4xxxy_n, grad4xxxz_n, grad4xxyy_n, grad4xxyz_n, grad4xxzz_n,
-    grad4xyyy_n, grad4xyyz_n, grad4xyzz_n, grad4xzzz_n, grad4yyyy_n, grad4yyyz_n,
-    grad4yyzz_n, grad4yzzz_n, grad4zzzz_n,
-    grad4xxxx_mx, grad4xxxy_mx, grad4xxxz_mx, grad4xxyy_mx, grad4xxyz_mx, grad4xxzz_mx,
-    grad4xyyy_mx, grad4xyyz_mx, grad4xyzz_mx, grad4xzzz_mx, grad4yyyy_mx, grad4yyyz_mx,
-    grad4yyzz_mx, grad4yzzz_mx, grad4zzzz_mx,
-    grad4xxxx_my, grad4xxxy_my, grad4xxxz_my, grad4xxyy_my, grad4xxyz_my, grad4xxzz_my,
-    grad4xyyy_my, grad4xyyz_my, grad4xyzz_my, grad4xzzz_my, grad4yyyy_my, grad4yyyz_my,
-    grad4yyzz_my, grad4yzzz_my, grad4zzzz_my,
-    grad4xxxx_mz, grad4xxxy_mz, grad4xxxz_mz, grad4xxyy_mz, grad4xxyz_mz, grad4xxzz_mz,
-    grad4xyyy_mz, grad4xyyz_mz, grad4xyzz_mz, grad4xzzz_mz, grad4yyyy_mz, grad4yyyz_mz,
-    grad4yyzz_mz, grad4yzzz_mz, grad4zzzz_mz
+    grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz
 );
 
         // Print results from gga_mc
@@ -307,54 +226,7 @@ void NCLibxc::gga_collinear_test()
             grad3zzz_rho1[i] = (grad3zzz_n[i] - grad3zzz_mz[i]) / 2.0;
         }
 
-        // Fourth-order gradients
-        std::vector<double> grad4xxxx_rho0(size), grad4xxxy_rho0(size), grad4xxxz_rho0(size);
-        std::vector<double> grad4xxyy_rho0(size), grad4xxyz_rho0(size), grad4xxzz_rho0(size);
-        std::vector<double> grad4xyyy_rho0(size), grad4xyyz_rho0(size), grad4xyzz_rho0(size);
-        std::vector<double> grad4xzzz_rho0(size), grad4yyyy_rho0(size), grad4yyyz_rho0(size);
-        std::vector<double> grad4yyzz_rho0(size), grad4yzzz_rho0(size), grad4zzzz_rho0(size);
-
-        std::vector<double> grad4xxxx_rho1(size), grad4xxxy_rho1(size), grad4xxxz_rho1(size);
-        std::vector<double> grad4xxyy_rho1(size), grad4xxyz_rho1(size), grad4xxzz_rho1(size);
-        std::vector<double> grad4xyyy_rho1(size), grad4xyyz_rho1(size), grad4xyzz_rho1(size);
-        std::vector<double> grad4xzzz_rho1(size), grad4yyyy_rho1(size), grad4yyyz_rho1(size);
-        std::vector<double> grad4yyzz_rho1(size), grad4yzzz_rho1(size), grad4zzzz_rho1(size);
-
-        for (size_t i = 0; i < size; ++i) {
-            // Calculate fourth-order gradients for rho0
-            grad4xxxx_rho0[i] = (grad4xxxx_n[i] + grad4xxxx_mz[i]) / 2.0;
-            grad4xxxy_rho0[i] = (grad4xxxy_n[i] + grad4xxxy_mz[i]) / 2.0;
-            grad4xxxz_rho0[i] = (grad4xxxz_n[i] + grad4xxxz_mz[i]) / 2.0;
-            grad4xxyy_rho0[i] = (grad4xxyy_n[i] + grad4xxyy_mz[i]) / 2.0;
-            grad4xxyz_rho0[i] = (grad4xxyz_n[i] + grad4xxyz_mz[i]) / 2.0;
-            grad4xxzz_rho0[i] = (grad4xxzz_n[i] + grad4xxzz_mz[i]) / 2.0;
-            grad4xyyy_rho0[i] = (grad4xyyy_n[i] + grad4xyyy_mz[i]) / 2.0;
-            grad4xyyz_rho0[i] = (grad4xyyz_n[i] + grad4xyyz_mz[i]) / 2.0;
-            grad4xyzz_rho0[i] = (grad4xyzz_n[i] + grad4xyzz_mz[i]) / 2.0;
-            grad4xzzz_rho0[i] = (grad4xzzz_n[i] + grad4xzzz_mz[i]) / 2.0;
-            grad4yyyy_rho0[i] = (grad4yyyy_n[i] + grad4yyyy_mz[i]) / 2.0;
-            grad4yyyz_rho0[i] = (grad4yyyz_n[i] + grad4yyyz_mz[i]) / 2.0;
-            grad4yyzz_rho0[i] = (grad4yyzz_n[i] + grad4yyzz_mz[i]) / 2.0;
-            grad4yzzz_rho0[i] = (grad4yzzz_n[i] + grad4yzzz_mz[i]) / 2.0;
-            grad4zzzz_rho0[i] = (grad4zzzz_n[i] + grad4zzzz_mz[i]) / 2.0;
-
-            // Calculate fourth-order gradients for rho1
-            grad4xxxx_rho1[i] = (grad4xxxx_n[i] - grad4xxxx_mz[i]) / 2.0;
-            grad4xxxy_rho1[i] = (grad4xxxy_n[i] - grad4xxxy_mz[i]) / 2.0;
-            grad4xxxz_rho1[i] = (grad4xxxz_n[i] - grad4xxxz_mz[i]) / 2.0;
-            grad4xxyy_rho1[i] = (grad4xxyy_n[i] - grad4xxyy_mz[i]) / 2.0;
-            grad4xxyz_rho1[i] = (grad4xxyz_n[i] - grad4xxyz_mz[i]) / 2.0;
-            grad4xxzz_rho1[i] = (grad4xxzz_n[i] - grad4xxzz_mz[i]) / 2.0;
-            grad4xyyy_rho1[i] = (grad4xyyy_n[i] - grad4xyyy_mz[i]) / 2.0;
-            grad4xyyz_rho1[i] = (grad4xyyz_n[i] - grad4xyyz_mz[i]) / 2.0;
-            grad4xyzz_rho1[i] = (grad4xyzz_n[i] - grad4xyzz_mz[i]) / 2.0;
-            grad4xzzz_rho1[i] = (grad4xzzz_n[i] - grad4xzzz_mz[i]) / 2.0;
-            grad4yyyy_rho1[i] = (grad4yyyy_n[i] - grad4yyyy_mz[i]) / 2.0;
-            grad4yyyz_rho1[i] = (grad4yyyz_n[i] - grad4yyyz_mz[i]) / 2.0;
-            grad4yyzz_rho1[i] = (grad4yyzz_n[i] - grad4yyzz_mz[i]) / 2.0;
-            grad4yzzz_rho1[i] = (grad4yzzz_n[i] - grad4yzzz_mz[i]) / 2.0;
-            grad4zzzz_rho1[i] = (grad4zzzz_n[i] - grad4zzzz_mz[i]) / 2.0;
-        }
+     
 
         // Call postlibxc_gga
         std::vector<double> e, v1, v2, f1, f2, f3;
@@ -375,16 +247,6 @@ void NCLibxc::gga_collinear_test()
     grad3xyy_rho1, grad3xyz_rho1, grad3xzz_rho1,
     grad3yyy_rho1, grad3yyz_rho1, grad3yzz_rho1,
     grad3zzz_rho1,
-    grad4xxxx_rho0, grad4xxxy_rho0, grad4xxxz_rho0,
-    grad4xxyy_rho0, grad4xxyz_rho0, grad4xxzz_rho0,
-    grad4xyyy_rho0, grad4xyyz_rho0, grad4xyzz_rho0,
-    grad4xzzz_rho0, grad4yyyy_rho0, grad4yyyz_rho0,
-    grad4yyzz_rho0, grad4yzzz_rho0, grad4zzzz_rho0,
-    grad4xxxx_rho1, grad4xxxy_rho1, grad4xxxz_rho1,
-    grad4xxyy_rho1, grad4xxyz_rho1, grad4xxzz_rho1,
-    grad4xyyy_rho1, grad4xyyz_rho1, grad4xyzz_rho1,
-    grad4xzzz_rho1, grad4yyyy_rho1, grad4yyyz_rho1,
-    grad4yyzz_rho1, grad4yzzz_rho1, grad4zzzz_rho1,
     e, v1, v2, f1, f2, f3
 );
 
@@ -577,26 +439,6 @@ void NCLibxc::gga_local_torque_test()
     std::vector<double> grad3yyy_mz(3, 0.0), grad3yyz_mz(3, 0.0), grad3yzz_mz(3, 0.0),
                         grad3zzz_mz(3, 0.0);
 
-    std::vector<double> grad4xxxx_n(3, 0.0), grad4xxxy_n(3, 0.0), grad4xxxz_n(3, 0.0),
-                        grad4xxyy_n(3, 0.0), grad4xxyz_n(3, 0.0), grad4xxzz_n(3, 0.0);
-    std::vector<double> grad4xyyy_n(3, 0.0), grad4xyyz_n(3, 0.0), grad4xyzz_n(3, 0.0),
-                        grad4xzzz_n(3, 0.0), grad4yyyy_n(3, 0.0), grad4yyyz_n(3, 0.0);
-    std::vector<double> grad4yyzz_n(3, 0.0), grad4yzzz_n(3, 0.0), grad4zzzz_n(3, 0.0);
-    std::vector<double> grad4xxxx_mx(3, 0.0), grad4xxxy_mx(3, 0.0), grad4xxxz_mx(3, 0.0),
-                        grad4xxyy_mx(3, 0.0), grad4xxyz_mx(3, 0.0), grad4xxzz_mx(3, 0.0);
-    std::vector<double> grad4xyyy_mx(3, 0.0), grad4xyyz_mx(3, 0.0), grad4xyzz_mx(3, 0.0),
-                        grad4xzzz_mx(3, 0.0), grad4yyyy_mx(3, 0.0), grad4yyyz_mx(3, 0.0);
-    std::vector<double> grad4yyzz_mx(3, 0.0), grad4yzzz_mx(3, 0.0), grad4zzzz_mx(3, 0.0);
-    std::vector<double> grad4xxxx_my(3, 0.0), grad4xxxy_my(3, 0.0), grad4xxxz_my(3, 0.0),
-                        grad4xxyy_my(3, 0.0), grad4xxyz_my(3, 0.0), grad4xxzz_my(3, 0.0);
-    std::vector<double> grad4xyyy_my(3, 0.0), grad4xyyz_my(3, 0.0), grad4xyzz_my(3, 0.0),
-                        grad4xzzz_my(3, 0.0), grad4yyyy_my(3, 0.0), grad4yyyz_my(3, 0.0);
-    std::vector<double> grad4yyzz_my(3, 0.0), grad4yzzz_my(3, 0.0), grad4zzzz_my(3, 0.0);
-    std::vector<double> grad4xxxx_mz(3, 0.0), grad4xxxy_mz(3, 0.0), grad4xxxz_mz(3, 0.0),
-                        grad4xxyy_mz(3, 0.0), grad4xxyz_mz(3, 0.0), grad4xxzz_mz(3, 0.0);
-    std::vector<double> grad4xyyy_mz(3, 0.0), grad4xyyz_mz(3, 0.0), grad4xyzz_mz(3, 0.0),
-                        grad4xzzz_mz(3, 0.0), grad4yyyy_mz(3, 0.0), grad4yyyz_mz(3, 0.0);
-    std::vector<double> grad4yyzz_mz(3, 0.0), grad4yzzz_mz(3, 0.0), grad4zzzz_mz(3, 0.0);
 
     int xc_id = 106;  
 
@@ -617,19 +459,7 @@ void NCLibxc::gga_local_torque_test()
         grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
         grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
         grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
-        grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz,
-        grad4xxxx_n, grad4xxxy_n, grad4xxxz_n, grad4xxyy_n, grad4xxyz_n, grad4xxzz_n,
-        grad4xyyy_n, grad4xyyz_n, grad4xyzz_n, grad4xzzz_n, grad4yyyy_n, grad4yyyz_n,
-        grad4yyzz_n, grad4yzzz_n, grad4zzzz_n,
-        grad4xxxx_mx, grad4xxxy_mx, grad4xxxz_mx, grad4xxyy_mx, grad4xxyz_mx, grad4xxzz_mx,
-        grad4xyyy_mx, grad4xyyz_mx, grad4xyzz_mx, grad4xzzz_mx, grad4yyyy_mx, grad4yyyz_mx,
-        grad4yyzz_mx, grad4yzzz_mx, grad4zzzz_mx,
-        grad4xxxx_my, grad4xxxy_my, grad4xxxz_my, grad4xxyy_my, grad4xxyz_my, grad4xxzz_my,
-        grad4xyyy_my, grad4xyyz_my, grad4xyzz_my, grad4xzzz_my, grad4yyyy_my, grad4yyyz_my,
-        grad4yyzz_my, grad4yzzz_my, grad4zzzz_my,
-        grad4xxxx_mz, grad4xxxy_mz, grad4xxxz_mz, grad4xxyy_mz, grad4xxyz_mz, grad4xxzz_mz,
-        grad4xyyy_mz, grad4xyyz_mz, grad4xyzz_mz, grad4xzzz_mz, grad4yyyy_mz, grad4yyyz_mz,
-        grad4yyzz_mz, grad4yzzz_mz, grad4zzzz_mz
+        grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz
     );
 
     auto torque = NCLibxc::gga_torque(mx,my,mz,V_MC);
@@ -689,30 +519,6 @@ void NCLibxc::gga_deri_limit()
         std::vector<double> grad3yyy_mz(1, 0.01), grad3yyz_mz(1, 0.01), grad3yzz_mz(1, 0.01);
         std::vector<double> grad3zzz_mz(1, 0.01);
 
-        std::vector<double> grad4xxxx_n(1, 0.01), grad4xxxy_n(1, 0.01), grad4xxxz_n(1, 0.01);
-        std::vector<double> grad4xxyy_n(1, 0.01), grad4xxyz_n(1, 0.01), grad4xxzz_n(1, 0.01);
-        std::vector<double> grad4xyyy_n(1, 0.01), grad4xyyz_n(1, 0.01), grad4xyzz_n(1, 0.01);
-        std::vector<double> grad4xzzz_n(1, 0.01), grad4yyyy_n(1, 0.01), grad4yyyz_n(1, 0.01);
-        std::vector<double> grad4yyzz_n(1, 0.01), grad4yzzz_n(1, 0.01), grad4zzzz_n(1, 0.01);
-
-        std::vector<double> grad4xxxx_mx(1, 0.01), grad4xxxy_mx(1, 0.01), grad4xxxz_mx(1, 0.01);
-        std::vector<double> grad4xxyy_mx(1, 0.01), grad4xxyz_mx(1, 0.01), grad4xxzz_mx(1, 0.01);
-        std::vector<double> grad4xyyy_mx(1, 0.01), grad4xyyz_mx(1, 0.01), grad4xyzz_mx(1, 0.01);
-        std::vector<double> grad4xzzz_mx(1, 0.01), grad4yyyy_mx(1, 0.01), grad4yyyz_mx(1, 0.01);
-        std::vector<double> grad4yyzz_mx(1, 0.01), grad4yzzz_mx(1, 0.01), grad4zzzz_mx(1, 0.01);
-
-        std::vector<double> grad4xxxx_my(1, 0.01), grad4xxxy_my(1, 0.01), grad4xxxz_my(1, 0.01);
-        std::vector<double> grad4xxyy_my(1, 0.01), grad4xxyz_my(1, 0.01), grad4xxzz_my(1, 0.01);
-        std::vector<double> grad4xyyy_my(1, 0.01), grad4xyyz_my(1, 0.01), grad4xyzz_my(1, 0.01);
-        std::vector<double> grad4xzzz_my(1, 0.01), grad4yyyy_my(1, 0.01), grad4yyyz_my(1, 0.01);
-        std::vector<double> grad4yyzz_my(1, 0.01), grad4yzzz_my(1, 0.01), grad4zzzz_my(1, 0.01);
-
-        std::vector<double> grad4xxxx_mz(1, 0.01), grad4xxxy_mz(1, 0.01), grad4xxxz_mz(1, 0.01);
-        std::vector<double> grad4xxyy_mz(1, 0.01), grad4xxyz_mz(1, 0.01), grad4xxzz_mz(1, 0.01);
-        std::vector<double> grad4xyyy_mz(1, 0.01), grad4xyyz_mz(1, 0.01), grad4xyzz_mz(1, 0.01);
-        std::vector<double> grad4xzzz_mz(1, 0.01), grad4yyyy_mz(1, 0.01), grad4yyyz_mz(1, 0.01);
-        std::vector<double> grad4yyzz_mz(1, 0.01), grad4yzzz_mz(1, 0.01), grad4zzzz_mz(1, 0.01);
-
 
         // Compute E and V using gga_mc
         auto [energy, potential] = gga_mc(
@@ -732,19 +538,7 @@ void NCLibxc::gga_deri_limit()
             grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
             grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
             grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
-            grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz,
-            grad4xxxx_n, grad4xxxy_n, grad4xxxz_n, grad4xxyy_n, grad4xxyz_n, grad4xxzz_n,
-            grad4xyyy_n, grad4xyyz_n, grad4xyzz_n, grad4xzzz_n, grad4yyyy_n, grad4yyyz_n,
-            grad4yyzz_n, grad4yzzz_n, grad4zzzz_n,
-            grad4xxxx_mx, grad4xxxy_mx, grad4xxxz_mx, grad4xxyy_mx, grad4xxyz_mx, grad4xxzz_mx,
-            grad4xyyy_mx, grad4xyyz_mx, grad4xyzz_mx, grad4xzzz_mx, grad4yyyy_mx, grad4yyyz_mx,
-            grad4yyzz_mx, grad4yzzz_mx, grad4zzzz_mx,
-            grad4xxxx_my, grad4xxxy_my, grad4xxxz_my, grad4xxyy_my, grad4xxyz_my, grad4xxzz_my,
-            grad4xyyy_my, grad4xyyz_my, grad4xyzz_my, grad4xzzz_my, grad4yyyy_my, grad4yyyz_my,
-            grad4yyzz_my, grad4yzzz_my, grad4zzzz_my,
-            grad4xxxx_mz, grad4xxxy_mz, grad4xxxz_mz, grad4xxyy_mz, grad4xxyz_mz, grad4xxzz_mz,
-            grad4xyyy_mz, grad4xyyz_mz, grad4xyzz_mz, grad4xzzz_mz, grad4yyyy_mz, grad4yyyz_mz,
-            grad4yyzz_mz, grad4yzzz_mz, grad4zzzz_mz
+            grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz
         );
 
         auto torque = gga_torque(mx, my, mz, potential);
