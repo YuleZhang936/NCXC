@@ -194,6 +194,9 @@ static std::vector<double> gga_Bxc(const std::vector<Matrix2x2> &V);
 
     // xc local torque and xc potential well-defined limit from gga
     static void gga_deri_limit();
+
+    //large scale test for gga_mc
+    static void gga_mc_large_scale_test();
 };
 
 // 声明 MakeAngularGrid 函数

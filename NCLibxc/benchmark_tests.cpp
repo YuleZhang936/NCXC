@@ -1,6 +1,7 @@
 #include "NCLibxc.h"
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 namespace NCXC {
 ///////////////////////////////////////////////////////////////////////////////////
 // collinear limit test for GGA
@@ -570,6 +571,155 @@ void NCLibxc::gga_deri_limit()
         
 
         std::cout << std::endl;
+    }
+}
+
+// test for gga_mc with large scale data
+void NCLibxc::gga_mc_large_scale_test()
+{
+    try
+    {
+        std::cout << "Running large-scale GGA MC test with 100,000 grid points..." << std::endl;
+        
+        // Set size to 100,000 elements
+        const size_t size = 100000;
+        
+        // Sample 0-th order density (all n = 1.0, m = 0.1)
+        std::vector<double> n(size, 1.0);
+        std::vector<double> mx(size, 0.1);
+        std::vector<double> my(size, 0.1);
+        std::vector<double> mz(size, 0.1);
+
+        // First derivatives (gradients) - all set to 0.1
+        std::vector<double> gradx_n(size, 1);
+        std::vector<double> grady_n(size, 1);
+        std::vector<double> gradz_n(size, 1);
+
+        std::vector<double> gradx_mx(size, 0.1);
+        std::vector<double> grady_mx(size, 0.1);
+        std::vector<double> gradz_mx(size, 0.1);
+
+        std::vector<double> gradx_my(size, 0.1);
+        std::vector<double> grady_my(size, 0.1);
+        std::vector<double> gradz_my(size, 0.1);
+
+        std::vector<double> gradx_mz(size, 0.1);
+        std::vector<double> grady_mz(size, 0.1);
+        std::vector<double> gradz_mz(size, 0.1);
+
+        // Second derivatives - all set to 0.1
+        std::vector<double> grad2xx_n(size, 1);
+        std::vector<double> grad2yy_n(size, 1);
+        std::vector<double> grad2zz_n(size, 1);
+        std::vector<double> grad2xy_n(size, 1);
+        std::vector<double> grad2yz_n(size, 1);
+        std::vector<double> grad2xz_n(size, 1);
+        
+        std::vector<double> grad2xx_mx(size, 0.1);
+        std::vector<double> grad2yy_mx(size, 0.1);
+        std::vector<double> grad2zz_mx(size, 0.1);
+        std::vector<double> grad2xy_mx(size, 0.1);
+        std::vector<double> grad2yz_mx(size, 0.1);
+        std::vector<double> grad2xz_mx(size, 0.1);
+        
+        std::vector<double> grad2xx_my(size, 0.1);
+        std::vector<double> grad2yy_my(size, 0.1);
+        std::vector<double> grad2zz_my(size, 0.1);
+        std::vector<double> grad2xy_my(size, 0.1);
+        std::vector<double> grad2yz_my(size, 0.1);
+        std::vector<double> grad2xz_my(size, 0.1);
+        
+        std::vector<double> grad2xx_mz(size, 0.1);
+        std::vector<double> grad2yy_mz(size, 0.1);
+        std::vector<double> grad2zz_mz(size, 0.1);
+        std::vector<double> grad2xy_mz(size, 0.1);
+        std::vector<double> grad2yz_mz(size, 0.1);
+        std::vector<double> grad2xz_mz(size, 0.1);
+
+        // Third-order derivatives - all set to 0.1
+        std::vector<double> grad3xxx_n(size, 1);
+        std::vector<double> grad3xxy_n(size, 1);
+        std::vector<double> grad3xxz_n(size, 1);
+        std::vector<double> grad3xyy_n(size, 1);
+        std::vector<double> grad3xyz_n(size, 1);
+        std::vector<double> grad3xzz_n(size, 1);
+        std::vector<double> grad3yyy_n(size, 1);
+        std::vector<double> grad3yyz_n(size, 1);
+        std::vector<double> grad3yzz_n(size, 1);
+        std::vector<double> grad3zzz_n(size, 1);
+
+        std::vector<double> grad3xxx_mx(size, 0.1);
+        std::vector<double> grad3xxy_mx(size, 0.1);
+        std::vector<double> grad3xxz_mx(size, 0.1);
+        std::vector<double> grad3xyy_mx(size, 0.1);
+        std::vector<double> grad3xyz_mx(size, 0.1);
+        std::vector<double> grad3xzz_mx(size, 0.1);
+        std::vector<double> grad3yyy_mx(size, 0.1);
+        std::vector<double> grad3yyz_mx(size, 0.1);
+        std::vector<double> grad3yzz_mx(size, 0.1);
+        std::vector<double> grad3zzz_mx(size, 0.1);
+
+        std::vector<double> grad3xxx_my(size, 0.1);
+        std::vector<double> grad3xxy_my(size, 0.1);
+        std::vector<double> grad3xxz_my(size, 0.1);
+        std::vector<double> grad3xyy_my(size, 0.1);
+        std::vector<double> grad3xyz_my(size, 0.1);
+        std::vector<double> grad3xzz_my(size, 0.1);
+        std::vector<double> grad3yyy_my(size, 0.1);
+        std::vector<double> grad3yyz_my(size, 0.1);
+        std::vector<double> grad3yzz_my(size, 0.1);
+        std::vector<double> grad3zzz_my(size, 0.1);
+
+        std::vector<double> grad3xxx_mz(size, 0.1);
+        std::vector<double> grad3xxy_mz(size, 0.1);
+        std::vector<double> grad3xxz_mz(size, 0.1);
+        std::vector<double> grad3xyy_mz(size, 0.1);
+        std::vector<double> grad3xyz_mz(size, 0.1);
+        std::vector<double> grad3xzz_mz(size, 0.1);
+        std::vector<double> grad3yyy_mz(size, 0.1);
+        std::vector<double> grad3yyz_mz(size, 0.1);
+        std::vector<double> grad3yzz_mz(size, 0.1);
+        std::vector<double> grad3zzz_mz(size, 0.1);
+
+        int xc_id = 106; // Example XC functional ID
+
+        // Record start time
+        auto start_time = std::chrono::high_resolution_clock::now();
+        
+        std::cout << "Starting gga_mc calculation with " << size << " points..." << std::endl;
+
+        // Call gga_mc
+        auto [E_GGA_MC, V_GGA_MC] = NCLibxc::gga_mc(
+            xc_id, n, mx, my, mz,
+            gradx_n, grady_n, gradz_n,
+            gradx_mx, grady_mx, gradz_mx,
+            gradx_my, grady_my, gradz_my,
+            gradx_mz, grady_mz, gradz_mz,
+            grad2xx_n, grad2yy_n, grad2zz_n, grad2xy_n, grad2yz_n, grad2xz_n,
+            grad2xx_mx, grad2yy_mx, grad2zz_mx, grad2xy_mx, grad2yz_mx, grad2xz_mx,
+            grad2xx_my, grad2yy_my, grad2zz_my, grad2xy_my, grad2yz_my, grad2xz_my,
+            grad2xx_mz, grad2yy_mz, grad2zz_mz, grad2xy_mz, grad2yz_mz, grad2xz_mz,
+            grad3xxx_n, grad3xxy_n, grad3xxz_n, grad3xyy_n, grad3xyz_n, grad3xzz_n,
+            grad3yyy_n, grad3yyz_n, grad3yzz_n, grad3zzz_n,
+            grad3xxx_mx, grad3xxy_mx, grad3xxz_mx, grad3xyy_mx, grad3xyz_mx, grad3xzz_mx,
+            grad3yyy_mx, grad3yyz_mx, grad3yzz_mx, grad3zzz_mx,
+            grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
+            grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
+            grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
+            grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz
+        );
+
+        // Record end time and calculate duration
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        
+        std::cout << "GGA MC calculation completed successfully!" << std::endl;
+        std::cout << "Number of grid points processed: " << size << std::endl;
+        std::cout << "Time taken: " << duration << " ms" << std::endl;
+        std::cout << "Average processing time per point: " << static_cast<double>(duration) / size << " ms" << std::endl;
+
+    } catch (const std::exception& ex) {
+        std::cerr << "Error in gga_mc_large_scale_test: " << ex.what() << std::endl;
     }
 }
 
