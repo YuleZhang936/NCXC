@@ -26,7 +26,7 @@ void NCLibxc::print_NCLibxc()
 // print xc torque
 void NCLibxc::print_torque(const std::vector<double>& torque)
 {
-    std::ofstream log_file("xc_torque.log", std::ios::out | std::ios::app);
+    std::ofstream log_file("xc_torque.log", std::ios::out);
     if (log_file.is_open())
     {
         log_file << "Torque values from gga_torque:\n";
