@@ -20,6 +20,14 @@ namespace NCXC{
 
 std::vector<std::array<double, 4>> MakeAngularGrid(int grid_level);
 
+// approximate a small collinear region
+static bool is_collinear(double x, double y, double z)
+{
+    double r = std::sqrt(x*x + y*y + z*z);
+    if (r < 1e-15) return true; //closed shell, consider it collinear
+    return std::fabs(z / r) > 0.999; // mz dominates, consider it collinear
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -159,6 +167,120 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
     std::vector<Matrix2x2> V(num_points, {{{0.0, 0.0}, {0.0, 0.0}}});
     std::vector<double> m_omega(num_points, 0.0);
 
+    bool use_CollinearJudge = true;  // Control flag for collinear region detection
+
+    // determine if the region is collinear
+    std::vector<char> collinear(num_points, 0);
+    if (use_CollinearJudge) {
+        for (size_t i = 0; i < num_points; ++i) {
+            bool c_m       = is_collinear(mx[i],   my[i],   mz[i]);
+            bool c_gradx  = is_collinear(gradx_mx[i],  gradx_my[i],  gradx_mz[i]);
+            bool c_grady  = is_collinear(grady_mx[i],  grady_my[i],  grady_mz[i]);
+            bool c_gradz  = is_collinear(gradz_mx[i],  gradz_my[i],  gradz_mz[i]);
+            bool c_grad2xx = is_collinear(grad2xx_mx[i], grad2xx_my[i], grad2xx_mz[i]);
+            bool c_grad2yy = is_collinear(grad2yy_mx[i], grad2yy_my[i], grad2yy_mz[i]);
+            bool c_grad2zz = is_collinear(grad2zz_mx[i], grad2zz_my[i], grad2zz_mz[i]);
+            bool c_grad2xy = is_collinear(grad2xy_mx[i], grad2xy_my[i], grad2xy_mz[i]);
+            bool c_grad2yz = is_collinear(grad2yz_mx[i], grad2yz_my[i], grad2yz_mz[i]);
+            bool c_grad2xz = is_collinear(grad2xz_mx[i], grad2xz_my[i], grad2xz_mz[i]);
+            bool c_grad3xxx = is_collinear(grad3xxx_mx[i], grad3xxy_mx[i], grad3xxz_mx[i]);
+            bool c_grad3xxy = is_collinear(grad3xxy_mx[i], grad3xxy_my[i], grad3xxy_mz[i]);
+            bool c_grad3xxz = is_collinear(grad3xxz_mx[i], grad3xxz_my[i], grad3xxz_mz[i]);
+            bool c_grad3xyy = is_collinear(grad3xyy_mx[i], grad3xyy_my[i], grad3xyy_mz[i]);
+            bool c_grad3xyz = is_collinear(grad3xyz_mx[i], grad3xyz_my[i], grad3xyz_mz[i]);
+            bool c_grad3xzz = is_collinear(grad3xzz_mx[i], grad3xzz_my[i], grad3xzz_mz[i]);
+            bool c_grad3yyy = is_collinear(grad3yyy_mx[i], grad3yyy_my[i], grad3yyy_mz[i]);
+            bool c_grad3yyz = is_collinear(grad3yyz_mx[i], grad3yyz_my[i], grad3yyz_mz[i]);
+            bool c_grad3yzz = is_collinear(grad3yzz_mx[i], grad3yzz_my[i], grad3yzz_mz[i]);
+            bool c_grad3zzz = is_collinear(grad3zzz_mx[i], grad3zzz_my[i], grad3zzz_mz[i]);
+          
+            collinear[i] = (c_m && c_gradx && c_grady && c_gradz &&c_grad2xx && c_grad2xy && c_grad2xz && c_grad2yy && c_grad2zz && c_grad3xxx && c_grad3xxy && c_grad3xxz && c_grad3xyy && c_grad3xyz && c_grad3xzz && c_grad3yyy && c_grad3yyz && c_grad3yzz && c_grad3zzz) ? 1 : 0;
+        }
+        for (size_t i = 0; i < num_points; ++i) {
+            if (!collinear[i] || n[i] == 0.0) continue;
+    
+            double rho0_ = (n[i] + mz[i]) * 0.5;
+            double rho1_ = (n[i] - mz[i]) * 0.5;
+    
+            double gx0 = (gradx_n[i] + gradx_mz[i]) * 0.5;
+            double gy0 = (grady_n[i] + grady_mz[i]) * 0.5;
+            double gz0 = (gradz_n[i] + gradz_mz[i]) * 0.5;
+            double gx1 = (gradx_n[i] - gradx_mz[i]) * 0.5;
+            double gy1 = (grady_n[i] - grady_mz[i]) * 0.5;
+            double gz1 = (gradz_n[i] - gradz_mz[i]) * 0.5;
+    
+            double g2xx0 = (grad2xx_n[i] + grad2xx_mz[i]) * 0.5;
+            double g2yy0 = (grad2yy_n[i] + grad2yy_mz[i]) * 0.5;
+            double g2zz0 = (grad2zz_n[i] + grad2zz_mz[i]) * 0.5;
+            double g2xy0 = (grad2xy_n[i] + grad2xy_mz[i]) * 0.5;
+            double g2yz0 = (grad2yz_n[i] + grad2yz_mz[i]) * 0.5;
+            double g2xz0 = (grad2xz_n[i] + grad2xz_mz[i]) * 0.5;
+            double g2xx1 = (grad2xx_n[i] - grad2xx_mz[i]) * 0.5;
+            double g2yy1 = (grad2yy_n[i] - grad2yy_mz[i]) * 0.5;
+            double g2zz1 = (grad2zz_n[i] - grad2zz_mz[i]) * 0.5;
+            double g2xy1 = (grad2xy_n[i] - grad2xy_mz[i]) * 0.5;
+            double g2yz1 = (grad2yz_n[i] - grad2yz_mz[i]) * 0.5;
+            double g2xz1 = (grad2xz_n[i] - grad2xz_mz[i]) * 0.5;
+
+            double g3xxx0 = (grad3xxx_n[i] + grad3xxx_mz[i]) * 0.5;
+            double g3xxy0 = (grad3xxy_n[i] + grad3xxy_mz[i]) * 0.5;
+            double g3xxz0 = (grad3xxz_n[i] + grad3xxz_mz[i]) * 0.5;
+            double g3xyy0 = (grad3xyy_n[i] + grad3xyy_mz[i]) * 0.5;
+            double g3xyz0 = (grad3xyz_n[i] + grad3xyz_mz[i]) * 0.5;
+            double g3xzz0 = (grad3xzz_n[i] + grad3xzz_mz[i]) * 0.5;
+            double g3yyy0 = (grad3yyy_n[i] + grad3yyy_mz[i]) * 0.5;
+            double g3yyz0 = (grad3yyz_n[i] + grad3yyz_mz[i]) * 0.5;
+            double g3yzz0 = (grad3yzz_n[i] + grad3yzz_mz[i]) * 0.5;
+            double g3zzz0 = (grad3zzz_n[i] + grad3zzz_mz[i]) * 0.5;
+            double g3xxx1 = (grad3xxx_n[i] - grad3xxx_mz[i]) * 0.5;
+            double g3xxy1 = (grad3xxy_n[i] - grad3xxy_mz[i]) * 0.5;
+            double g3xxz1 = (grad3xxz_n[i] - grad3xxz_mz[i]) * 0.5;
+            double g3xyy1 = (grad3xyy_n[i] - grad3xyy_mz[i]) * 0.5;
+            double g3xyz1 = (grad3xyz_n[i] - grad3xyz_mz[i]) * 0.5;
+            double g3xzz1 = (grad3xzz_n[i] - grad3xzz_mz[i]) * 0.5;
+            double g3yyy1 = (grad3yyy_n[i] - grad3yyy_mz[i]) * 0.5;
+            double g3yyz1 = (grad3yyz_n[i] - grad3yyz_mz[i]) * 0.5;
+            double g3yzz1 = (grad3yzz_n[i] - grad3yzz_mz[i]) * 0.5;
+            double g3zzz1 = (grad3zzz_n[i] - grad3zzz_mz[i]) * 0.5;
+    
+
+            std::vector<double> R0{rho0_}, R1{rho1_};
+            std::vector<double> GX0{gx0}, GY0{gy0}, GZ0{gz0},
+                                GX1{gx1}, GY1{gy1}, GZ1{gz1};
+            std::vector<double> G2xx0{g2xx0}, G2yy0{g2yy0}, G2zz0{g2zz0},
+                                G2xy0{g2xy0}, G2yz0{g2yz0}, G2xz0{g2xz0};
+            std::vector<double> G2xx1{g2xx1}, G2yy1{g2yy1}, G2zz1{g2zz1},
+                                G2xy1{g2xy1}, G2yz1{g2yz1}, G2xz1{g2xz1};
+            std::vector<double> G3xxx0{g3xxx0}, G3xxy0{g3xxy0}, G3xxz0{g3xxz0},
+                                G3xyy0{g3xyy0}, G3xyz0{g3xyz0}, G3xzz0{g3xzz0},
+                                G3yyy0{g3yyy0}, G3yyz0{g3yyz0}, G3yzz0{g3yzz0}, G3zzz0{g3zzz0};
+            std::vector<double> G3xxx1{g3xxx1}, G3xxy1{g3xxy1}, G3xxz1{g3xxz1},
+                                G3xyy1{g3xyy1}, G3xyz1{g3xyz1}, G3xzz1{g3xzz1},
+                                G3yyy1{g3yyy1}, G3yyz1{g3yyz1}, G3yzz1{g3yzz1}, G3zzz1{g3zzz1};
+
+            std::vector<double> e1(1), v11(1), v21(1), f11(1), f21(1), f31(1);
+            postlibxc_gga(xc_id,
+                R0, R1,
+                GX0, GY0, GZ0,
+                GX1, GY1, GZ1,
+                G2xx0, G2yy0, G2zz0,
+                G2xy0, G2yz0, G2xz0,
+                G2xx1, G2yy1, G2zz1,
+                G2xy1, G2yz1, G2xz1,
+                G3xxx0, G3xxy0, G3xxz0,
+                G3xyy0, G3xyz0, G3xzz0,
+                G3yyy0, G3yyz0, G3yzz0, G3zzz0,
+                G3xxx1, G3xxy1, G3xxz1,
+                G3xyy1, G3xyz1, G3xzz1,
+                G3yyy1, G3yyz1, G3yzz1, G3zzz1,
+                e1, v11, v21, f11, f21, f31);
+    
+            E[i] = e1[0];
+            V[i] = {{{ std::complex<double>(v11[0],0), std::complex<double>(0,0) },
+                 { std::complex<double>(0,0), std::complex<double>(v21[0],0) } }};
+        }
+    }
+
     for (const auto &coord : grids)
     {
         double x = coord[0];
@@ -215,6 +337,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
+            if(collinear[i] || n[i] == 0.0) continue;
             m_omega[i] = mx[i] * x + my[i] * y + mz[i] * z;
             rho0[i] = (n[i] + m_omega[i]) / 2.0;
             rho1[i] = (n[i] - m_omega[i]) / 2.0;
@@ -261,29 +384,89 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
         }
 
         std::vector<double> e(num_points, 0.0), v1(num_points, 0.0), v2(num_points, 0.0), f1(num_points, 0.0), f2(num_points, 0.0), f3(num_points, 0.0);
-        postlibxc_gga(xc_id, rho0, rho1,
-             gradx_rho0, grady_rho0, gradz_rho0,
-             gradx_rho1, grady_rho1, gradz_rho1,
-             grad2xx_rho0, grad2yy_rho0, grad2zz_rho0,
-             grad2xy_rho0, grad2yz_rho0, grad2xz_rho0,
-             grad2xx_rho1, grad2yy_rho1, grad2zz_rho1,
-             grad2xy_rho1, grad2yz_rho1, grad2xz_rho1,
-             grad3xxx_rho0, grad3xxy_rho0, grad3xxz_rho0,
-             grad3xyy_rho0, grad3xyz_rho0, grad3xzz_rho0,
-             grad3yyy_rho0, grad3yyz_rho0, grad3yzz_rho0,
-             grad3zzz_rho0,
-             grad3xxx_rho1, grad3xxy_rho1, grad3xxz_rho1,
-             grad3xyy_rho1, grad3xyz_rho1, grad3xzz_rho1,
-             grad3yyy_rho1, grad3yyz_rho1, grad3yzz_rho1,
-             grad3zzz_rho1,
-             e, v1, v2, f1, f2, f3);
+
+        for(size_t i = 0; i < num_points; ++i)
+        {
+            if (collinear[i] || n[i] == 0.0) continue;
+
+            std::vector<double> rho0_vec{rho0[i]};
+            std::vector<double> rho1_vec{rho1[i]};
+            std::vector<double> gradx_rho0_vec{gradx_rho0[i]};
+            std::vector<double> grady_rho0_vec{grady_rho0[i]};
+            std::vector<double> gradz_rho0_vec{gradz_rho0[i]};
+            std::vector<double> gradx_rho1_vec{gradx_rho1[i]};
+            std::vector<double> grady_rho1_vec{grady_rho1[i]};
+            std::vector<double> gradz_rho1_vec{gradz_rho1[i]};
+            std::vector<double> grad2xx_rho0_vec{grad2xx_rho0[i]};
+            std::vector<double> grad2yy_rho0_vec{grad2yy_rho0[i]};
+            std::vector<double> grad2zz_rho0_vec{grad2zz_rho0[i]};
+            std::vector<double> grad2xy_rho0_vec{grad2xy_rho0[i]};
+            std::vector<double> grad2yz_rho0_vec{grad2yz_rho0[i]};
+            std::vector<double> grad2xz_rho0_vec{grad2xz_rho0[i]};
+            std::vector<double> grad2xx_rho1_vec{grad2xx_rho1[i]};
+            std::vector<double> grad2yy_rho1_vec{grad2yy_rho1[i]};
+            std::vector<double> grad2zz_rho1_vec{grad2zz_rho1[i]};
+            std::vector<double> grad2xy_rho1_vec{grad2xy_rho1[i]};
+            std::vector<double> grad2yz_rho1_vec{grad2yz_rho1[i]};
+            std::vector<double> grad2xz_rho1_vec{grad2xz_rho1[i]};
+            std::vector<double> grad3xxx_rho0_vec{grad3xxx_rho0[i]};
+            std::vector<double> grad3xxy_rho0_vec{grad3xxy_rho0[i]};
+            std::vector<double> grad3xxz_rho0_vec{grad3xxz_rho0[i]};
+            std::vector<double> grad3xyy_rho0_vec{grad3xyy_rho0[i]};
+            std::vector<double> grad3xyz_rho0_vec{grad3xyz_rho0[i]};
+            std::vector<double> grad3xzz_rho0_vec{grad3xzz_rho0[i]};
+            std::vector<double> grad3yyy_rho0_vec{grad3yyy_rho0[i]};
+            std::vector<double> grad3yyz_rho0_vec{grad3yyz_rho0[i]};
+            std::vector<double> grad3yzz_rho0_vec{grad3yzz_rho0[i]};
+            std::vector<double> grad3zzz_rho0_vec{grad3zzz_rho0[i]};
+            std::vector<double> grad3xxx_rho1_vec{grad3xxx_rho1[i]};
+            std::vector<double> grad3xxy_rho1_vec{grad3xxy_rho1[i]};
+            std::vector<double> grad3xxz_rho1_vec{grad3xxz_rho1[i]};
+            std::vector<double> grad3xyy_rho1_vec{grad3xyy_rho1[i]};
+            std::vector<double> grad3xyz_rho1_vec{grad3xyz_rho1[i]};
+            std::vector<double> grad3xzz_rho1_vec{grad3xzz_rho1[i]};
+            std::vector<double> grad3yyy_rho1_vec{grad3yyy_rho1[i]};
+            std::vector<double> grad3yyz_rho1_vec{grad3yyz_rho1[i]};
+            std::vector<double> grad3yzz_rho1_vec{grad3yzz_rho1[i]};
+            std::vector<double> grad3zzz_rho1_vec{grad3zzz_rho1[i]};
+
+            std::vector<double> e_vec(1), v1_vec(1), v2_vec(1), f1_vec(1), f2_vec(1), f3_vec(1);
+
+
+            postlibxc_gga(xc_id,
+                rho0_vec, rho1_vec,
+                gradx_rho0_vec, grady_rho0_vec, gradz_rho0_vec,
+                gradx_rho1_vec, grady_rho1_vec, gradz_rho1_vec,
+                grad2xx_rho0_vec, grad2yy_rho0_vec, grad2zz_rho0_vec,
+                grad2xy_rho0_vec, grad2yz_rho0_vec, grad2xz_rho0_vec,
+                grad2xx_rho1_vec, grad2yy_rho1_vec, grad2zz_rho1_vec,
+                grad2xy_rho1_vec, grad2yz_rho1_vec, grad2xz_rho1_vec,
+                grad3xxx_rho0_vec, grad3xxy_rho0_vec, grad3xxz_rho0_vec,
+                grad3xyy_rho0_vec, grad3xyz_rho0_vec, grad3xzz_rho0_vec,
+                grad3yyy_rho0_vec, grad3yyz_rho0_vec, grad3yzz_rho0_vec, 
+                grad3zzz_rho0_vec,
+                grad3xxx_rho1_vec, grad3xxy_rho1_vec, 
+                grad3xxz_rho1_vec,grad3xyy_rho1_vec,
+                grad3xyz_rho1_vec,grad3xzz_rho1_vec,
+                grad3yyy_rho1_vec,grad3yyz_rho1_vec,
+                grad3yzz_rho1_vec,grad3zzz_rho1_vec,
+                e_vec, v1_vec, v2_vec, f1_vec, f2_vec, f3_vec);
+
+            e[i] = e_vec[0];
+            v1[i] = v1_vec[0];
+            v2[i] = v2_vec[0];
+            f1[i] = f1_vec[0];
+            f2[i] = f2_vec[0];
+            f3[i] = f3_vec[0];
+        }
+        
 
         std::vector<double> Eeff(num_points, 0.0);
         std::vector<Matrix2x2> Veff(num_points, {{{0.0, 0.0}, {0.0, 0.0}}});
 
         for (size_t i = 0; i < num_points; ++i)
         {
-            if (n[i] == 0.0){
+            if (n[i] == 0.0|| collinear[i]) {
                 continue;
             }
 
