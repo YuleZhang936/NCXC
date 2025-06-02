@@ -169,6 +169,15 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
     bool use_CollinearJudge = true;  // Control flag for collinear region detection
 
+    const double n_wall = 1e-10 ;
+
+    for (size_t i=0; i<num_points; ++i){
+        if (n[i]<n_wall){
+            n[i] = 0 ;
+        }
+    }
+
+
     // determine if the region is collinear
     std::vector<char> collinear(num_points, 0);
     if (use_CollinearJudge) {
