@@ -171,12 +171,6 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
     const double n_wall = 1e-10 ;
 
-    for (size_t i=0; i<num_points; ++i){
-        if (n[i]<n_wall){
-            n[i] = 0 ;
-        }
-    }
-
 
     // determine if the region is collinear
     std::vector<char> collinear(num_points, 0);
@@ -206,7 +200,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
             collinear[i] = (c_m && c_gradx && c_grady && c_gradz &&c_grad2xx && c_grad2xy && c_grad2xz && c_grad2yy && c_grad2zz && c_grad3xxx && c_grad3xxy && c_grad3xxz && c_grad3xyy && c_grad3xyz && c_grad3xzz && c_grad3yyy && c_grad3yyz && c_grad3yzz && c_grad3zzz) ? 1 : 0;
         }
         for (size_t i = 0; i < num_points; ++i) {
-            if (!collinear[i] || n[i] == 0.0) continue;
+            if (!collinear[i] || n[i] < n_wall) continue;
     
             double rho0_ = (n[i] + mz[i]) * 0.5;
             double rho1_ = (n[i] - mz[i]) * 0.5;
@@ -346,7 +340,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
-            if(collinear[i] || n[i] == 0.0) continue;
+            if(collinear[i] || n[i] < n_wall) continue;
             m_omega[i] = mx[i] * x + my[i] * y + mz[i] * z;
             rho0[i] = (n[i] + m_omega[i]) / 2.0;
             rho1[i] = (n[i] - m_omega[i]) / 2.0;
@@ -396,7 +390,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for(size_t i = 0; i < num_points; ++i)
         {
-            if (collinear[i] || n[i] == 0.0) continue;
+            if (collinear[i] || n[i] < n_wall) continue;
 
             std::vector<double> rho0_vec{rho0[i]};
             std::vector<double> rho1_vec{rho1[i]};
@@ -475,7 +469,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
-            if (n[i] == 0.0|| collinear[i]) {
+            if (n[i] < n_wall|| collinear[i]) {
                 continue;
             }
 
