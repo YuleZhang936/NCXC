@@ -723,4 +723,141 @@ void NCLibxc::gga_mc_large_scale_test()
     }
 }
 
+void NCLibxc::gga_mc_ir_test()
+{
+    const int xc_id = 106;  // Functional ID
+    const size_t size = 2;  // 两个样本点
+
+    // 输入数据 - 一阶梯度
+    std::vector<double> n        = {0.0206042, 0.020962};
+    std::vector<double> mx       = {3.9212e-17, 3.93746e-17};
+    std::vector<double> my       = {1.09293e-19, 1.08655e-19};
+    std::vector<double> mz       = {0.0251652, 0.0262013};
+    std::vector<double> gradx_n  = {0.0413746, 0.0416958};
+    std::vector<double> grady_n  = {-8.30215e-18, 5.69725e-17};
+    std::vector<double> gradz_n  = {0.00327891, 0.00164878};
+    std::vector<double> gradx_mx = {8.20006e-17, 8.17718e-17};
+    std::vector<double> grady_mx = {6.78554e-18, 6.14345e-18};
+    std::vector<double> gradz_mx = {5.74577e-18, -3.4525e-18};
+    std::vector<double> gradx_my = {3.39874e-19, 3.33983e-19};
+    std::vector<double> grady_my = {6.58162e-23, 3.85928e-23};
+    std::vector<double> gradz_my = {6.16462e-21, -1.41338e-20};
+    std::vector<double> gradx_mz = {0.0652852, 0.0677117};
+    std::vector<double> grady_mz = {2.77768e-17, -3.24048e-17};
+    std::vector<double> gradz_mz = {0.00893192, 0.00511721};
+
+    // 二阶梯度 (24个向量)
+    std::vector<double> grad2xx_n   = {0.0814215, 0.0799918};
+    std::vector<double> grad2yy_n   = {-0.0349828, -0.0352474};
+    std::vector<double> grad2zz_n   = {-0.0128073, -0.0094527};
+    std::vector<double> grad2xy_n   = {3.1792e-16, 4.54473e-16};
+    std::vector<double> grad2yz_n   = {1.90782e-16, 3.12222e-16};
+    std::vector<double> grad2xz_n   = {0.0037835, 0.00100217};
+    
+    std::vector<double> grad2xx_mx  = {1.57185e-16, 1.54371e-16};
+    std::vector<double> grad2yy_mx  = {-6.91087e-17, -6.85987e-17};
+    std::vector<double> grad2zz_mx  = {-6.35776e-17, -5.96898e-17};
+    std::vector<double> grad2xy_mx  = {2.39442e-17, 2.1328e-17};
+    std::vector<double> grad2yz_mx  = {-3.37759e-18, -5.18622e-18};
+    std::vector<double> grad2xz_mx  = {1.16104e-17, -1.42126e-17};
+    
+    std::vector<double> grad2xx_my  = {9.45404e-19, 9.14004e-19};
+    std::vector<double> grad2yy_my  = {-2.8729e-19, -2.82151e-19};
+    std::vector<double> grad2zz_my  = {-1.5448e-19, -1.23271e-19};
+    std::vector<double> grad2xy_my  = {3.38199e-22, 2.34028e-22};
+    std::vector<double> grad2yz_my  = {-1.59456e-22, -2.05524e-22};
+    std::vector<double> grad2xz_my  = {-6.93111e-21, -6.84909e-20};
+    
+    std::vector<double> grad2xx_mz  = {0.156385, 0.160828};
+    std::vector<double> grad2yy_mz  = {-0.0551208, -0.0571468};
+    std::vector<double> grad2zz_mz  = {-0.0263, -0.0254659};
+    std::vector<double> grad2xy_mz  = {2.94412e-16, -1.72097e-16};
+    std::vector<double> grad2yz_mz  = {-1.84602e-16, -4.82342e-16};
+    std::vector<double> grad2xz_mz  = {0.0214891, 0.0117204};
+
+    // 三阶梯度 (40个向量)
+    std::vector<double> grad3xxx_n  = {0.137279, 0.12221};
+    std::vector<double> grad3xxy_n  = {2.71305e-15, 7.13777e-16};
+    std::vector<double> grad3xxz_n  = {-0.00824955, -0.00930039};
+    std::vector<double> grad3xyy_n  = {-0.0984508, -0.0974493};
+    std::vector<double> grad3xyz_n  = {5.15908e-16, 4.96079e-16};
+    std::vector<double> grad3xzz_n  = {-0.0280179, -0.0105146};
+    std::vector<double> grad3yyy_n  = {-3.35193e-15, -1.11822e-14};
+    std::vector<double> grad3yyz_n  = {-0.00313887, -0.000807881};
+    std::vector<double> grad3yzz_n  = {8.10856e-15, -5.91776e-15};
+    std::vector<double> grad3zzz_n  = {0.0254741, 0.0185476};
+    
+    std::vector<double> grad3xxx_mx = {2.27888e-16, 2.04974e-16};
+    std::vector<double> grad3xxy_mx = {7.4136e-17, 6.49588e-17};
+    std::vector<double> grad3xxz_mx = {1.37304e-17, -4.99398e-17};
+    std::vector<double> grad3xyy_mx = {-1.90707e-16, -1.86885e-16};
+    std::vector<double> grad3xyz_mx = {-1.42255e-17, -2.06462e-17};
+    std::vector<double> grad3xzz_mx = {-1.82635e-16, -1.62697e-16};
+    std::vector<double> grad3yyy_mx = {-6.91616e-17, -6.00231e-17};
+    std::vector<double> grad3yyz_mx = {-7.82111e-18, 1.42721e-17};
+    std::vector<double> grad3yzz_mx = {-1.48981e-17, -9.45393e-18};
+    std::vector<double> grad3zzz_mx = {-2.38755e-18, 5.21325e-17};
+    
+    std::vector<double> grad3xxx_my = {2.11451e-18, 1.92492e-18};
+    std::vector<double> grad3xxy_my = {1.21908e-21, 8.72936e-22};
+    std::vector<double> grad3xxz_my = {-1.33105e-19, -2.76356e-19};
+    std::vector<double> grad3xyy_my = {-1.04135e-18, -1.01024e-18};
+    std::vector<double> grad3xyz_my = {-6.06383e-22, -7.90474e-22};
+    std::vector<double> grad3xzz_my = {-5.08053e-19, -3.32336e-19};
+    std::vector<double> grad3yyy_my = {-1.02847e-21, -6.11762e-22};
+    std::vector<double> grad3yyz_my = {7.10945e-21, 5.87502e-20};
+    std::vector<double> grad3yzz_my = {-3.84482e-22, -2.30473e-22};
+    std::vector<double> grad3zzz_my = {2.64306e-19, 1.64868e-19};
+    
+    std::vector<double> grad3xxx_mz = {0.30008, 0.29227};
+    std::vector<double> grad3xxy_mz = {-3.91586e-15, -1.37685e-15};
+    std::vector<double> grad3xxz_mz = {0.0399974, 0.0214668};
+    std::vector<double> grad3xyy_mz = {-0.178534, -0.18398};
+    std::vector<double> grad3xyz_mz = {-2.69306e-15, -1.82219e-15};
+    std::vector<double> grad3xzz_mz = {-0.0731732, -0.059763};
+    std::vector<double> grad3yyy_mz = {-1.21585e-15, 1.10801e-14};
+    std::vector<double> grad3yyz_mz = {-0.0179568, -0.0097791};
+    std::vector<double> grad3yzz_mz = {-3.89537e-15, 2.70304e-15};
+    std::vector<double> grad3zzz_mz = {0.00700599, 0.00419113};
+
+    // 调用 GGA_MC 泛函
+    auto [E_ir, V_ir] = NCLibxc::gga_mc(
+        xc_id, 
+        n, mx, my, mz,
+        gradx_n, grady_n, gradz_n,
+        gradx_mx, grady_mx, gradz_mx,
+        gradx_my, grady_my, gradz_my,
+        gradx_mz, grady_mz, gradz_mz,
+        // 二阶梯度
+        grad2xx_n, grad2yy_n, grad2zz_n, grad2xy_n, grad2yz_n, grad2xz_n,
+        grad2xx_mx, grad2yy_mx, grad2zz_mx, grad2xy_mx, grad2yz_mx, grad2xz_mx,
+        grad2xx_my, grad2yy_my, grad2zz_my, grad2xy_my, grad2yz_my, grad2xz_my,
+        grad2xx_mz, grad2yy_mz, grad2zz_mz, grad2xy_mz, grad2yz_mz, grad2xz_mz,
+        // 三阶梯度
+        grad3xxx_n, grad3xxy_n, grad3xxz_n, grad3xyy_n, grad3xyz_n, grad3xzz_n, 
+        grad3yyy_n, grad3yyz_n, grad3yzz_n, grad3zzz_n,
+        grad3xxx_mx, grad3xxy_mx, grad3xxz_mx, grad3xyy_mx, grad3xyz_mx, grad3xzz_mx,
+        grad3yyy_mx, grad3yyz_mx, grad3yzz_mx, grad3zzz_mx,
+        grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
+        grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
+        grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
+        grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz
+    );
+
+    // 打印结果
+    std::cout << "=== IR GGA_MC Test ===\n";
+    std::cout << std::fixed << std::setprecision(8);
+    std::cout << "E: ";
+    for (auto e : E_ir) {
+        std::cout << e << " ";
+    }
+    std::cout << "\nV: [ ";
+    for (auto &m : V_ir) {
+        std::cout << "["
+                  << m[0][0] << "," << m[0][1] << ";"
+                  << m[1][0] << "," << m[1][1]
+                  << "] ";
+    }
+    std::cout << "]\n";
+}
 }

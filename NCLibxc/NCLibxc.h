@@ -197,6 +197,9 @@ static std::vector<double> gga_Bxc(const std::vector<Matrix2x2> &V);
 
     //large scale test for gga_mc
     static void gga_mc_large_scale_test();
+
+    // IR 格点专用的 GGA_MC 测试（示例）
+    static void gga_mc_ir_test();
 };
 
 // 声明 MakeAngularGrid 函数

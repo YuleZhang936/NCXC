@@ -169,38 +169,36 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
     bool use_CollinearJudge = true;  // Control flag for collinear region detection
 
-    const double n_wall = 1e-10 ;
-
-
     // determine if the region is collinear
     std::vector<char> collinear(num_points, 0);
     if (use_CollinearJudge) {
         for (size_t i = 0; i < num_points; ++i) {
             bool c_m       = is_collinear(mx[i],   my[i],   mz[i]);
-            bool c_gradx  = is_collinear(gradx_mx[i],  gradx_my[i],  gradx_mz[i]);
-            bool c_grady  = is_collinear(grady_mx[i],  grady_my[i],  grady_mz[i]);
-            bool c_gradz  = is_collinear(gradz_mx[i],  gradz_my[i],  gradz_mz[i]);
-            bool c_grad2xx = is_collinear(grad2xx_mx[i], grad2xx_my[i], grad2xx_mz[i]);
-            bool c_grad2yy = is_collinear(grad2yy_mx[i], grad2yy_my[i], grad2yy_mz[i]);
-            bool c_grad2zz = is_collinear(grad2zz_mx[i], grad2zz_my[i], grad2zz_mz[i]);
-            bool c_grad2xy = is_collinear(grad2xy_mx[i], grad2xy_my[i], grad2xy_mz[i]);
-            bool c_grad2yz = is_collinear(grad2yz_mx[i], grad2yz_my[i], grad2yz_mz[i]);
-            bool c_grad2xz = is_collinear(grad2xz_mx[i], grad2xz_my[i], grad2xz_mz[i]);
-            bool c_grad3xxx = is_collinear(grad3xxx_mx[i], grad3xxy_mx[i], grad3xxz_mx[i]);
-            bool c_grad3xxy = is_collinear(grad3xxy_mx[i], grad3xxy_my[i], grad3xxy_mz[i]);
-            bool c_grad3xxz = is_collinear(grad3xxz_mx[i], grad3xxz_my[i], grad3xxz_mz[i]);
-            bool c_grad3xyy = is_collinear(grad3xyy_mx[i], grad3xyy_my[i], grad3xyy_mz[i]);
-            bool c_grad3xyz = is_collinear(grad3xyz_mx[i], grad3xyz_my[i], grad3xyz_mz[i]);
-            bool c_grad3xzz = is_collinear(grad3xzz_mx[i], grad3xzz_my[i], grad3xzz_mz[i]);
-            bool c_grad3yyy = is_collinear(grad3yyy_mx[i], grad3yyy_my[i], grad3yyy_mz[i]);
-            bool c_grad3yyz = is_collinear(grad3yyz_mx[i], grad3yyz_my[i], grad3yyz_mz[i]);
-            bool c_grad3yzz = is_collinear(grad3yzz_mx[i], grad3yzz_my[i], grad3yzz_mz[i]);
-            bool c_grad3zzz = is_collinear(grad3zzz_mx[i], grad3zzz_my[i], grad3zzz_mz[i]);
+            // bool c_gradx  = is_collinear(gradx_mx[i],  gradx_my[i],  gradx_mz[i]);
+            // bool c_grady  = is_collinear(grady_mx[i],  grady_my[i],  grady_mz[i]);
+            // bool c_gradz  = is_collinear(gradz_mx[i],  gradz_my[i],  gradz_mz[i]);
+            // bool c_grad2xx = is_collinear(grad2xx_mx[i], grad2xx_my[i], grad2xx_mz[i]);
+            // bool c_grad2yy = is_collinear(grad2yy_mx[i], grad2yy_my[i], grad2yy_mz[i]);
+            // bool c_grad2zz = is_collinear(grad2zz_mx[i], grad2zz_my[i], grad2zz_mz[i]);
+            // bool c_grad2xy = is_collinear(grad2xy_mx[i], grad2xy_my[i], grad2xy_mz[i]);
+            // bool c_grad2yz = is_collinear(grad2yz_mx[i], grad2yz_my[i], grad2yz_mz[i]);
+            // bool c_grad2xz = is_collinear(grad2xz_mx[i], grad2xz_my[i], grad2xz_mz[i]);
+            // bool c_grad3xxx = is_collinear(grad3xxx_mx[i], grad3xxy_mx[i], grad3xxz_mx[i]);
+            // bool c_grad3xxy = is_collinear(grad3xxy_mx[i], grad3xxy_my[i], grad3xxy_mz[i]);
+            // bool c_grad3xxz = is_collinear(grad3xxz_mx[i], grad3xxz_my[i], grad3xxz_mz[i]);
+            // bool c_grad3xyy = is_collinear(grad3xyy_mx[i], grad3xyy_my[i], grad3xyy_mz[i]);
+            // bool c_grad3xyz = is_collinear(grad3xyz_mx[i], grad3xyz_my[i], grad3xyz_mz[i]);
+            // bool c_grad3xzz = is_collinear(grad3xzz_mx[i], grad3xzz_my[i], grad3xzz_mz[i]);
+            // bool c_grad3yyy = is_collinear(grad3yyy_mx[i], grad3yyy_my[i], grad3yyy_mz[i]);
+            // bool c_grad3yyz = is_collinear(grad3yyz_mx[i], grad3yyz_my[i], grad3yyz_mz[i]);
+            // bool c_grad3yzz = is_collinear(grad3yzz_mx[i], grad3yzz_my[i], grad3yzz_mz[i]);
+            // bool c_grad3zzz = is_collinear(grad3zzz_mx[i], grad3zzz_my[i], grad3zzz_mz[i]);
           
-            collinear[i] = (c_m && c_gradx && c_grady && c_gradz &&c_grad2xx && c_grad2xy && c_grad2xz && c_grad2yy && c_grad2zz && c_grad3xxx && c_grad3xxy && c_grad3xxz && c_grad3xyy && c_grad3xyz && c_grad3xzz && c_grad3yyy && c_grad3yyz && c_grad3yzz && c_grad3zzz) ? 1 : 0;
+            // collinear[i] = (c_m && c_gradx && c_grady && c_gradz &&c_grad2xx && c_grad2xy && c_grad2xz && c_grad2yy && c_grad2zz && c_grad3xxx && c_grad3xxy && c_grad3xxz && c_grad3xyy && c_grad3xyz && c_grad3xzz && c_grad3yyy && c_grad3yyz && c_grad3yzz && c_grad3zzz) ? 1 : 0;
+            collinear[i] = (c_m ) ? 1 : 0;
         }
         for (size_t i = 0; i < num_points; ++i) {
-            if (!collinear[i] || n[i] < n_wall) continue;
+            if (!collinear[i] || n[i] == 0.0) continue;
     
             double rho0_ = (n[i] + mz[i]) * 0.5;
             double rho1_ = (n[i] - mz[i]) * 0.5;
@@ -340,7 +338,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
-            if(collinear[i] || n[i] < n_wall) continue;
+            if(collinear[i] || n[i] == 0.0) continue;
             m_omega[i] = mx[i] * x + my[i] * y + mz[i] * z;
             rho0[i] = (n[i] + m_omega[i]) / 2.0;
             rho1[i] = (n[i] - m_omega[i]) / 2.0;
@@ -390,7 +388,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for(size_t i = 0; i < num_points; ++i)
         {
-            if (collinear[i] || n[i] < n_wall) continue;
+            if (collinear[i] || n[i] == 0.0) continue;
 
             std::vector<double> rho0_vec{rho0[i]};
             std::vector<double> rho1_vec{rho1[i]};
@@ -469,7 +467,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
 
         for (size_t i = 0; i < num_points; ++i)
         {
-            if (n[i] < n_wall|| collinear[i]) {
+            if (n[i] == 0.0|| collinear[i]) {
                 continue;
             }
 

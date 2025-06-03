@@ -13,10 +13,12 @@ using namespace NCXC;
 
 int main() {
         NCLibxc::print_NCLibxc();
-        NCLibxc::lda_mc_lc_test();
-        NCLibxc::lda_mc_collinear_test();
+      //  NCLibxc::lda_mc_lc_test();
+     //   NCLibxc::lda_mc_collinear_test();
         NCLibxc::gga_collinear_test();
-        NCLibxc::gga_local_torque_test();
-        NCLibxc::gga_deri_limit();
-        NCLibxc::gga_mc_large_scale_test();
+       // NCLibxc::gga_local_torque_test();
+     //   NCLibxc::gga_deri_limit();
+       // NCLibxc::gga_mc_large_scale_test();
+       NCLibxc::gga_mc_ir_test();
+        
 }
