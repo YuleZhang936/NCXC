@@ -167,7 +167,7 @@ std::pair<std::vector<double>, std::vector<Matrix2x2>> NCLibxc::gga_mc(int xc_id
     std::vector<Matrix2x2> V(num_points, {{{0.0, 0.0}, {0.0, 0.0}}});
     std::vector<double> m_omega(num_points, 0.0);
 
-    bool use_CollinearJudge = true;  // Control flag for collinear region detection
+    bool use_CollinearJudge = false;  // Control flag for collinear region detection. can be used for acceleration.
 
     // determine if the region is collinear
     std::vector<char> collinear(num_points, 0);
