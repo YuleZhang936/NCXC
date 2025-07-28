@@ -141,6 +141,63 @@ public:
                                 std::vector<double>& vgs 
                                 );
 
+    // true function for postlibxc_gga_eff. postlibxc_gga is now only used for collinear potential
+    static void postlibxc_gga_eff(int xc_id, 
+                                const std::vector<double>& rho0, 
+                                const std::vector<double>& rho1, 
+                                const std::vector<double>& gradx_rho0, 
+                                const std::vector<double>& grady_rho0, 
+                                const std::vector<double>& gradz_rho0, 
+                                const std::vector<double>& gradx_rho1, 
+                                const std::vector<double>& grady_rho1, 
+                                const std::vector<double>& gradz_rho1, 
+                                const std::vector<double>& grad2xx_rho0, 
+                                const std::vector<double>& grad2yy_rho0, 
+                                const std::vector<double>& grad2zz_rho0, 
+                                const std::vector<double>& grad2xy_rho0, 
+                                const std::vector<double>& grad2yz_rho0, 
+                                const std::vector<double>& grad2xz_rho0, 
+                                const std::vector<double>& grad2xx_rho1, 
+                                const std::vector<double>& grad2yy_rho1, 
+                                const std::vector<double>& grad2zz_rho1, 
+                                const std::vector<double>& grad2xy_rho1, 
+                                const std::vector<double>& grad2yz_rho1, 
+                                const std::vector<double>& grad2xz_rho1, 
+                                const std::vector<double>& grad3xxx_rho0, 
+                                const std::vector<double>& grad3xxy_rho0, 
+                                const std::vector<double>& grad3xxz_rho0, 
+                                const std::vector<double>& grad3xyy_rho0, 
+                                const std::vector<double>& grad3xyz_rho0, 
+                                const std::vector<double>& grad3xzz_rho0, 
+                                const std::vector<double>& grad3yyy_rho0, 
+                                const std::vector<double>& grad3yyz_rho0, 
+                                const std::vector<double>& grad3yzz_rho0, 
+                                const std::vector<double>& grad3zzz_rho0, 
+                                const std::vector<double>& grad3xxx_rho1, 
+                                const std::vector<double>& grad3xxy_rho1, 
+                                const std::vector<double>& grad3xxz_rho1, 
+                                const std::vector<double>& grad3xyy_rho1, 
+                                const std::vector<double>& grad3xyz_rho1, 
+                                const std::vector<double>& grad3xzz_rho1, 
+                                const std::vector<double>& grad3yyy_rho1, 
+                                const std::vector<double>& grad3yyz_rho1, 
+                                const std::vector<double>& grad3yzz_rho1, 
+                                const std::vector<double>& grad3zzz_rho1, 
+                                const std::vector<double>& tau0,
+                                const std::vector<double>& tau1,
+                                const std::vector<double>& gradx_tau0, 
+                                const std::vector<double>& grady_tau0, 
+                                const std::vector<double>& gradz_tau0, 
+                                const std::vector<double>& gradx_tau1, 
+                                const std::vector<double>& grady_tau1, 
+                                const std::vector<double>& gradz_tau1,  
+                                std::vector<double>& e, 
+                                std::vector<double>& vn, 
+                                std::vector<double>& vs,
+                                std::vector<double>& vgn,
+                                std::vector<double>& vgs 
+                                );
+
     // lda_mc函数，输入是xc_id, n, mx, my, mz，返回每个实空间格点的E和V
     static std::pair<std::vector<double>, std::vector<Matrix2x2>> lda_mc(int xc_id, const std::vector<double>& n, 
                                                                   const std::vector<double>& mx, const std::vector<double>& my, const std::vector<double>& mz);
@@ -188,6 +245,9 @@ static std::vector<double> gga_Bxc(const std::vector<Matrix2x2> &V);
 
     // collinear test for lda_mc
     static void lda_mc_collinear_test();
+
+    // collinear test for mgga_mc (pure part)
+    static void mgga_collinear_test();
 
     //xc local torque from gga
     static void gga_local_torque_test();

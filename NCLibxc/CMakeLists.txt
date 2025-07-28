@@ -27,6 +27,7 @@ set(SOURCE_FILES
     print.cpp
     benchmark_tests.cpp
     torque.cpp
+    gga_col.cpp
 )
 
 # 生成动态库

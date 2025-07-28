@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include <tuple>
 namespace NCXC {
 ///////////////////////////////////////////////////////////////////////////////////
 // collinear limit test for GGA
@@ -860,4 +861,348 @@ void NCLibxc::gga_mc_ir_test()
     }
     std::cout << "]\n";
 }
+
+///////////////////////////////////////////////////////////////////////////////////
+// collinear limit test for MGGA (pure part)
+// TODO: the current implementation is not completely correct. Its benchmark is wrong. 1. eliminate the energy term (not a functional) 2. write a collinear potential for benchmark
+void NCLibxc::mgga_collinear_test()
+{
+    try {
+        NCLibxc::print_NCLibxc();
+        
+        // Sample 0-th order density
+        std::vector<double> n = {1.0, 1.0, 2.0};
+        std::vector<double> mx = {0.0, 0.0, 0.0};
+        std::vector<double> my = {0.0, 0.0, 0.0};
+        std::vector<double> mz = {0.1, -0.1, 0.1};
+
+        // Sample gradients 
+        std::vector<double> gradx_n = {0.1, 0.1, 0.1};
+        std::vector<double> grady_n = {0.2, 0.2, 0.5};
+        std::vector<double> gradz_n = {0.3, 0.3, 0.6};
+
+        std::vector<double> gradx_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grady_mx = {0.0, 0.0, 0.0};
+        std::vector<double> gradz_mx = {0.0, 0.0, 0.0};
+
+        std::vector<double> gradx_my = {0.0, 0.0, 0.0};
+        std::vector<double> grady_my = {0.0, 0.0, 0.0};
+        std::vector<double> gradz_my = {0.0, 0.0, 0.0};
+
+        std::vector<double> gradx_mz = {0.2, -0.2, 0.1};
+        std::vector<double> grady_mz = {0.3, -0.3, 0.1};
+        std::vector<double> gradz_mz = {0.1, -0.1, 0.1};
+
+        // Second derivatives 
+        std::vector<double> grad2xx_n = {0.5, 0.5, 0.0};
+        std::vector<double> grad2yy_n = {0.2, 0.2, 0.0};
+        std::vector<double> grad2zz_n = {0.3, 0.3, 0.0};
+        std::vector<double> grad2xy_n = {0.7, 0.7, 0.0};
+        std::vector<double> grad2yz_n = {0.8, 0.8, 0.0};
+        std::vector<double> grad2xz_n = {0.9, 0.9, 0.0};
+        std::vector<double> grad2xx_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2yy_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2zz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xy_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2yz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xx_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2yy_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2zz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xy_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2yz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad2xx_mz = {0.01, -0.01, 0.0};
+        std::vector<double> grad2yy_mz = {0.02, -0.02, 0.0};
+        std::vector<double> grad2zz_mz = {0.03, -0.03, 0.0};
+        std::vector<double> grad2xy_mz = {0.06, -0.06, 0.0};
+        std::vector<double> grad2yz_mz = {0.07, -0.07, 0.0};
+        std::vector<double> grad2xz_mz = {0.08, -0.08, 0.0};
+
+        // Third-order derivatives for n
+        std::vector<double> grad3xxx_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3xxy_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3xxz_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3xyy_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3xyz_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3xzz_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3yyy_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3yyz_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3yzz_n = {0.1, 0.1, 0.2};
+        std::vector<double> grad3zzz_n = {0.1, 0.1, 0.2};
+
+        // Third-order derivatives for mx (all zeros)
+        std::vector<double> grad3xxx_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xxy_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xxz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xyy_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xyz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xzz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yyy_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yyz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yzz_mx = {0.0, 0.0, 0.0};
+        std::vector<double> grad3zzz_mx = {0.0, 0.0, 0.0};
+
+        // Third-order derivatives for my (all zeros)
+        std::vector<double> grad3xxx_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xxy_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xxz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xyy_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xyz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3xzz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yyy_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yyz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3yzz_my = {0.0, 0.0, 0.0};
+        std::vector<double> grad3zzz_my = {0.0, 0.0, 0.0};
+
+        // Third-order derivatives for mz
+        std::vector<double> grad3xxx_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3xxy_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3xxz_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3xyy_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3xyz_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3xzz_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3yyy_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3yyz_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3yzz_mz = {0.05, -0.05, 0.05};
+        std::vector<double> grad3zzz_mz = {0.05, -0.05, 0.05};
+
+        // Kinetic energy density and current density 
+        std::vector<double> tau = {0.5, 0.5, 1.0};
+        std::vector<double> ux = {0.0, 0.0, 0.0};
+        std::vector<double> uy = {0.0, 0.0, 0.0};
+        std::vector<double> uz = {0.1, -0.1, 0.05};
+
+        // Gradients of tau
+        std::vector<double> gradx_tau = {0.1, 0.1, 0.2};
+        std::vector<double> grady_tau = {0.2, 0.2, 0.3};
+        std::vector<double> gradz_tau = {0.3, 0.3, 0.4};
+
+        // Gradients of u
+        std::vector<double> gradx_ux = {0.0, 0.0, 0.0};
+        std::vector<double> grady_ux = {0.0, 0.0, 0.0};
+        std::vector<double> gradz_ux = {0.0, 0.0, 0.0};
+        std::vector<double> gradx_uy = {0.0, 0.0, 0.0};
+        std::vector<double> grady_uy = {0.0, 0.0, 0.0};
+        std::vector<double> gradz_uy = {0.0, 0.0, 0.0};
+        std::vector<double> gradx_uz = {0.1, -0.1, 0.05};
+        std::vector<double> grady_uz = {0.2, -0.2, 0.1};
+        std::vector<double> gradz_uz = {0.05, -0.05, 0.02};
+
+        int xc_id = 229; 
+
+        // Call mgga_mc
+        auto [E_MGGA_MC, Vpure_MGGA_MC, Vtau_MGGA_MC] = NCLibxc::mgga_mc(
+            xc_id, n, mx, my, mz,
+            gradx_n, grady_n, gradz_n,
+            gradx_mx, grady_mx, gradz_mx,
+            gradx_my, grady_my, gradz_my,
+            gradx_mz, grady_mz, gradz_mz,
+            grad2xx_n, grad2yy_n, grad2zz_n, grad2xy_n, grad2yz_n, grad2xz_n,
+            grad2xx_mx, grad2yy_mx, grad2zz_mx, grad2xy_mx, grad2yz_mx, grad2xz_mx,
+            grad2xx_my, grad2yy_my, grad2zz_my, grad2xy_my, grad2yz_my, grad2xz_my,
+            grad2xx_mz, grad2yy_mz, grad2zz_mz, grad2xy_mz, grad2yz_mz, grad2xz_mz,
+            grad3xxx_n, grad3xxy_n, grad3xxz_n, grad3xyy_n, grad3xyz_n, grad3xzz_n,
+            grad3yyy_n, grad3yyz_n, grad3yzz_n, grad3zzz_n,
+            grad3xxx_mx, grad3xxy_mx, grad3xxz_mx, grad3xyy_mx, grad3xyz_mx, grad3xzz_mx,
+            grad3yyy_mx, grad3yyz_mx, grad3yzz_mx, grad3zzz_mx,
+            grad3xxx_my, grad3xxy_my, grad3xxz_my, grad3xyy_my, grad3xyz_my, grad3xzz_my,
+            grad3yyy_my, grad3yyz_my, grad3yzz_my, grad3zzz_my,
+            grad3xxx_mz, grad3xxy_mz, grad3xxz_mz, grad3xyy_mz, grad3xyz_mz, grad3xzz_mz,
+            grad3yyy_mz, grad3yyz_mz, grad3yzz_mz, grad3zzz_mz,
+            tau, ux, uy, uz,
+            gradx_tau, grady_tau, gradz_tau,
+            gradx_ux, grady_ux, gradz_ux,
+            gradx_uy, grady_uy, gradz_uy,
+            gradx_uz, grady_uz, gradz_uz
+        );
+
+        // Print results from mgga_mc
+        std::cout << std::fixed << std::setprecision(8);
+        std::cout << "Total E for each real-space grid point (MGGA MC):" << std::endl;
+        for (const auto &e : E_MGGA_MC)
+            std::cout << e << " ";
+        std::cout << std::endl;
+        std::cout << "Total Vpure for each real-space grid point (MGGA MC):" << std::endl;
+        std::cout << "[ ";
+        for (const auto &mat : Vpure_MGGA_MC) {
+            std::cout << "[ ";
+            std::cout << mat[0][0] << " " << mat[0][1] << " "
+                      << mat[1][0] << " " << mat[1][1];
+            std::cout << "] ";
+        }
+        std::cout << "]" << std::endl;
+
+        // Prepare inputs for postlibxc_mgga (collinear case)
+        size_t size = n.size();
+        std::vector<double> rho0(size), rho1(size);
+        for (size_t i = 0; i < size; ++i) {
+            rho0[i] = (n[i] + mz[i]) / 2.0;
+            rho1[i] = (n[i] - mz[i]) / 2.0;
+        }
+
+        // Gradient calculations for collinear case
+        std::vector<double> gradx_rho0(size), grady_rho0(size), gradz_rho0(size);
+        std::vector<double> gradx_rho1(size), grady_rho1(size), gradz_rho1(size);
+        for (size_t i = 0; i < size; ++i) {
+            gradx_rho0[i] = (gradx_n[i] + gradx_mz[i]) / 2.0;
+            grady_rho0[i] = (grady_n[i] + grady_mz[i]) / 2.0;
+            gradz_rho0[i] = (gradz_n[i] + gradz_mz[i]) / 2.0;
+            gradx_rho1[i] = (gradx_n[i] - gradx_mz[i]) / 2.0;
+            grady_rho1[i] = (grady_n[i] - grady_mz[i]) / 2.0;
+            gradz_rho1[i] = (gradz_n[i] - gradz_mz[i]) / 2.0;
+        }
+
+        // Second derivatives for collinear case
+        std::vector<double> grad2xx_rho0(size), grad2yy_rho0(size), grad2zz_rho0(size);
+        std::vector<double> grad2xy_rho0(size), grad2yz_rho0(size), grad2xz_rho0(size);
+        std::vector<double> grad2xx_rho1(size), grad2yy_rho1(size), grad2zz_rho1(size);
+        std::vector<double> grad2xy_rho1(size), grad2yz_rho1(size), grad2xz_rho1(size);
+        for (size_t i = 0; i < size; ++i) {
+            grad2xx_rho0[i] = (grad2xx_n[i] + grad2xx_mz[i]) / 2.0;
+            grad2yy_rho0[i] = (grad2yy_n[i] + grad2yy_mz[i]) / 2.0;
+            grad2zz_rho0[i] = (grad2zz_n[i] + grad2zz_mz[i]) / 2.0;
+            grad2xy_rho0[i] = (grad2xy_n[i] + grad2xy_mz[i]) / 2.0;
+            grad2yz_rho0[i] = (grad2yz_n[i] + grad2yz_mz[i]) / 2.0;
+            grad2xz_rho0[i] = (grad2xz_n[i] + grad2xz_mz[i]) / 2.0;
+            grad2xx_rho1[i] = (grad2xx_n[i] - grad2xx_mz[i]) / 2.0;
+            grad2yy_rho1[i] = (grad2yy_n[i] - grad2yy_mz[i]) / 2.0;
+            grad2zz_rho1[i] = (grad2zz_n[i] - grad2zz_mz[i]) / 2.0;
+            grad2xy_rho1[i] = (grad2xy_n[i] - grad2xy_mz[i]) / 2.0;
+            grad2yz_rho1[i] = (grad2yz_n[i] - grad2yz_mz[i]) / 2.0;
+            grad2xz_rho1[i] = (grad2xz_n[i] - grad2xz_mz[i]) / 2.0;
+        }
+
+        // Third-order gradients for collinear case
+        std::vector<double> grad3xxx_rho0(size), grad3xxy_rho0(size), grad3xxz_rho0(size);
+        std::vector<double> grad3xyy_rho0(size), grad3xyz_rho0(size), grad3xzz_rho0(size);
+        std::vector<double> grad3yyy_rho0(size), grad3yyz_rho0(size), grad3yzz_rho0(size);
+        std::vector<double> grad3zzz_rho0(size);
+        std::vector<double> grad3xxx_rho1(size), grad3xxy_rho1(size), grad3xxz_rho1(size);
+        std::vector<double> grad3xyy_rho1(size), grad3xyz_rho1(size), grad3xzz_rho1(size);
+        std::vector<double> grad3yyy_rho1(size), grad3yyz_rho1(size), grad3yzz_rho1(size);
+        std::vector<double> grad3zzz_rho1(size);
+        for (size_t i = 0; i < size; ++i) {
+            // Calculate third-order gradients for rho0
+            grad3xxx_rho0[i] = (grad3xxx_n[i] + grad3xxx_mz[i]) / 2.0;
+            grad3xxy_rho0[i] = (grad3xxy_n[i] + grad3xxy_mz[i]) / 2.0;
+            grad3xxz_rho0[i] = (grad3xxz_n[i] + grad3xxz_mz[i]) / 2.0;
+            grad3xyy_rho0[i] = (grad3xyy_n[i] + grad3xyy_mz[i]) / 2.0;
+            grad3xyz_rho0[i] = (grad3xyz_n[i] + grad3xyz_mz[i]) / 2.0;
+            grad3xzz_rho0[i] = (grad3xzz_n[i] + grad3xzz_mz[i]) / 2.0;
+            grad3yyy_rho0[i] = (grad3yyy_n[i] + grad3yyy_mz[i]) / 2.0;
+            grad3yyz_rho0[i] = (grad3yyz_n[i] + grad3yyz_mz[i]) / 2.0;
+            grad3yzz_rho0[i] = (grad3yzz_n[i] + grad3yzz_mz[i]) / 2.0;
+            grad3zzz_rho0[i] = (grad3zzz_n[i] + grad3zzz_mz[i]) / 2.0;
+            
+            // Calculate third-order gradients for rho1
+            grad3xxx_rho1[i] = (grad3xxx_n[i] - grad3xxx_mz[i]) / 2.0;
+            grad3xxy_rho1[i] = (grad3xxy_n[i] - grad3xxy_mz[i]) / 2.0;
+            grad3xxz_rho1[i] = (grad3xxz_n[i] - grad3xxz_mz[i]) / 2.0;
+            grad3xyy_rho1[i] = (grad3xyy_n[i] - grad3xyy_mz[i]) / 2.0;
+            grad3xyz_rho1[i] = (grad3xyz_n[i] - grad3xyz_mz[i]) / 2.0;
+            grad3xzz_rho1[i] = (grad3xzz_n[i] - grad3xzz_mz[i]) / 2.0;
+            grad3yyy_rho1[i] = (grad3yyy_n[i] - grad3yyy_mz[i]) / 2.0;
+            grad3yyz_rho1[i] = (grad3yyz_n[i] - grad3yyz_mz[i]) / 2.0;
+            grad3yzz_rho1[i] = (grad3yzz_n[i] - grad3yzz_mz[i]) / 2.0;
+            grad3zzz_rho1[i] = (grad3zzz_n[i] - grad3zzz_mz[i]) / 2.0;
+        }
+
+        // Tau calculations for collinear case
+        std::vector<double> tau0(size), tau1(size);
+        std::vector<double> gradx_tau0(size), grady_tau0(size), gradz_tau0(size);
+        std::vector<double> gradx_tau1(size), grady_tau1(size), gradz_tau1(size);
+        for (size_t i = 0; i < size; ++i) {
+            tau0[i] = (tau[i] + uz[i]) / 2.0;
+            tau1[i] = (tau[i] - uz[i]) / 2.0;
+            gradx_tau0[i] = (gradx_tau[i] + gradx_uz[i]) / 2.0;
+            grady_tau0[i] = (grady_tau[i] + grady_uz[i]) / 2.0;
+            gradz_tau0[i] = (gradz_tau[i] + gradz_uz[i]) / 2.0;
+            gradx_tau1[i] = (gradx_tau[i] - gradx_uz[i]) / 2.0;
+            grady_tau1[i] = (grady_tau[i] - grady_uz[i]) / 2.0;
+            gradz_tau1[i] = (gradz_tau[i] - gradz_uz[i]) / 2.0;
+        }
+
+        // Call postlibxc_mgga for comparison
+        std::vector<double> e_direct, vn_direct, vs_direct, vgn_direct, vgs_direct;
+        NCLibxc::postlibxc_mgga(
+            xc_id,
+            rho0, rho1,
+            gradx_rho0, grady_rho0, gradz_rho0,
+            gradx_rho1, grady_rho1, gradz_rho1,
+            grad2xx_rho0, grad2yy_rho0, grad2zz_rho0,
+            grad2xy_rho0, grad2yz_rho0, grad2xz_rho0,
+            grad2xx_rho1, grad2yy_rho1, grad2zz_rho1,
+            grad2xy_rho1, grad2yz_rho1, grad2xz_rho1,
+            grad3xxx_rho0, grad3xxy_rho0, grad3xxz_rho0,
+            grad3xyy_rho0, grad3xyz_rho0, grad3xzz_rho0,
+            grad3yyy_rho0, grad3yyz_rho0, grad3yzz_rho0,
+            grad3zzz_rho0,
+            grad3xxx_rho1, grad3xxy_rho1, grad3xxz_rho1,
+            grad3xyy_rho1, grad3xyz_rho1, grad3xzz_rho1,
+            grad3yyy_rho1, grad3yyz_rho1, grad3yzz_rho1,
+            grad3zzz_rho1,
+            tau0, tau1,
+            gradx_tau0, grady_tau0, gradz_tau0,
+            gradx_tau1, grady_tau1, gradz_tau1,
+            e_direct, vn_direct, vs_direct, vgn_direct, vgs_direct
+        );
+
+        // Print results from postlibxc_mgga
+        std::cout << "Total E for each real-space grid point (postlibxc_mgga):" << std::endl;
+        for (const auto &e : e_direct)
+            std::cout << e << " ";
+        std::cout << std::endl;
+
+        std::cout << "Total VN for each real-space grid point (postlibxc_mgga):" << std::endl;
+        for (const auto &v : vn_direct)
+            std::cout << v << " ";
+        std::cout << std::endl;
+
+        std::cout << "Total VS for each real-space grid point (postlibxc_mgga):" << std::endl;
+        for (const auto &v : vs_direct)
+            std::cout << v << " ";
+        std::cout << std::endl;
+
+        // Compare results and check consistency
+        std::cout << "\n=== CONSISTENCY CHECK ===" << std::endl;
+        
+        // Check energy consistency
+        std::cout << "Energy consistency check:" << std::endl;
+        for (size_t i = 0; i < size; ++i) {
+            double rel_error = std::abs(E_MGGA_MC[i] - e_direct[i]) / (std::abs(e_direct[i]) + 1e-15);
+            std::cout << "Point " << i << ": E_MC=" << E_MGGA_MC[i] 
+                      << ", e_direct=" << e_direct[i] 
+                      << ", rel_error=" << rel_error << std::endl;
+        }
+
+        // Check Vpure consistency: Vpure should equal diag(0.5*(vn+vs), 0.5*(vn-vs))
+        std::cout << "\nVpure consistency check:" << std::endl;
+        for (size_t i = 0; i < size; ++i) {
+            // Expected diagonal matrix elements
+            std::complex<double> expected_00 = 0.5 * (vn_direct[i] + vs_direct[i]);
+            std::complex<double> expected_11 = 0.5 * (vn_direct[i] - vs_direct[i]);
+            
+            std::cout << "Point " << i << ":" << std::endl;
+            std::cout << "  Expected: diag(" << expected_00 << ", " << expected_11 << ")" << std::endl;
+            std::cout << "  Actual  : [" << Vpure_MGGA_MC[i][0][0] << " " << Vpure_MGGA_MC[i][0][1] << "]" << std::endl;
+            std::cout << "            [" << Vpure_MGGA_MC[i][1][0] << " " << Vpure_MGGA_MC[i][1][1] << "]" << std::endl;
+            
+            // Calculate relative errors for diagonal elements
+            double rel_error_00 = std::abs(Vpure_MGGA_MC[i][0][0] - expected_00) / (std::abs(expected_00) + 1e-15);
+            double rel_error_11 = std::abs(Vpure_MGGA_MC[i][1][1] - expected_11) / (std::abs(expected_11) + 1e-15);
+            
+            std::cout << "  Rel. errors: (0,0)=" << rel_error_00 << ", (1,1)=" << rel_error_11 << std::endl;
+            
+            // Check off-diagonal elements should be zero for collinear case
+            double off_diag_01 = std::abs(Vpure_MGGA_MC[i][0][1]);
+            double off_diag_10 = std::abs(Vpure_MGGA_MC[i][1][0]);
+            std::cout << "  Off-diag magnitudes: (0,1)=" << off_diag_01 << ", (1,0)=" << off_diag_10 << std::endl;
+        }
+
+    } catch (const std::exception& ex) {
+        std::cerr << "Error: " << ex.what() << std::endl;
+    }
+}
+
 }
