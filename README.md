@@ -31,4 +31,4 @@ NCXC 3.3 is launched and programmed by Xiaoyu Zhang, Peking University, China 20
 NCXC 3.4 is launched and programmed by Xiaoyu Zhang, Peking University, China 2025/03/29
 
 
-Ref:PHYSICAL REVIEW RESEARCH 5, 013036 (2023);  J Kubler et al 1988 J. Phys. F: Met. Phys. 18 469
+Please cite: Xiaoyu Zhang and Taoni Bao, J. Chem. Theory Comput. 2025, 21, 9620−9630
